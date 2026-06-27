@@ -67,26 +67,76 @@ Use descriptive branch names prefixed with the type:
 - `docs/api-endpoints` — documentation
 - `refactor/auth-middleware` — code refactoring
 
-### Making changes
+### Making changes (TDD Workflow)
+
+This project uses **Test-Driven Development**. Every feature and bug fix must follow this workflow:
 
 1. Create a new branch from `main`:
    ```bash
    git checkout -b feat/your-feature-name
    ```
 
-2. Make your changes, following the code style rules in [.agents/AGENTS.md](.agents/AGENTS.md).
-
-3. Commit using [Conventional Commits](https://www.conventionalcommits.org/):
+2. **Write a failing test first** (Red):
    ```bash
-   git commit -m "feat: add conversation upload endpoint"
-   git commit -m "fix: handle empty JSONL files gracefully"
-   git commit -m "docs: add API endpoint documentation"
+   # Backend
+   cd backend && bun test src/routes/auth.test.ts     # Should fail
+
+   # Frontend
+   cd frontend && bun run test src/utils/transcript.test.ts   # Should fail
    ```
 
-4. Push and create a pull request:
+3. **Write minimum code to pass the test** (Green):
+   - Implement just enough to make the test pass
+   - Run the test again to verify it passes
+
+4. **Refactor** while keeping tests green:
+   - Clean up the code
+   - Run `bun test` (backend) or `bun run test` (frontend) to ensure nothing breaks
+
+5. **Repeat** for the next piece of functionality.
+
+6. Commit using [Conventional Commits](https://www.conventionalcommits.org/):
+   ```bash
+   git commit -m "test: add tests for auth register endpoint"
+   git commit -m "feat: implement auth register endpoint"
+   git commit -m "test: add tests for invalid email validation"
+   git commit -m "fix: handle empty JSONL files gracefully"
+   ```
+
+7. Push and create a pull request:
    ```bash
    git push origin feat/your-feature-name
    ```
+
+### Test Setup
+
+#### Backend (Bun test runner)
+
+Tests run with Bun's built-in test runner. No additional setup required.
+
+```bash
+cd backend
+bun test                    # Run all tests
+bun test --watch            # Watch mode
+bun test src/routes/        # Run tests in a specific directory
+```
+
+For integration tests that require a database, set up a test database:
+
+```bash
+createdb convhub_test
+```
+
+Set `DATABASE_URL` in your test environment to point to `convhub_test`.
+
+#### Frontend (Vitest)
+
+```bash
+cd frontend
+bun run test                # Run all tests
+bun run test:watch          # Watch mode
+bun run test:coverage       # With coverage report
+```
 
 ### Pull Request Guidelines
 
@@ -95,6 +145,8 @@ Use descriptive branch names prefixed with the type:
 - **List any new dependencies** added.
 - **Include screenshots** for UI changes.
 - Keep PRs focused — one feature or fix per PR.
+- **PRs without tests will be rejected.** Every new function, endpoint, and component must have tests.
+- Tests must have been written **before** the implementation code (TDD).
 
 ## Code Style
 

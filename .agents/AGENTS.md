@@ -89,11 +89,131 @@ convhub/
 
 4. **Denormalized counters**: `like_count`, `comment_count`, and `view_count` on the `conversations` table are denormalized for performance. They must be updated atomically when likes/comments are added or removed (use `UPDATE ... SET like_count = like_count + 1`).
 
-## Testing
+## Testing — MANDATORY (TDD)
 
-Tests are appreciated but not required for the MVP. If you write tests:
-- Frontend: use Vitest + React Testing Library
-- Backend: use Bun's built-in test runner
+This project enforces **Test-Driven Development (TDD)**. Every feature and bug fix **must** follow the Red-Green-Refactor cycle:
+
+1. **Red** — Write a failing test that describes the expected behavior.
+2. **Green** — Write the minimum implementation code to make the test pass.
+3. **Refactor** — Clean up the code while keeping all tests passing.
+
+**PRs without tests will be rejected.** No exceptions.
+
+### Test Frameworks
+
+| Layer | Framework | Config |
+|-------|-----------|--------|
+| Frontend | Vitest + React Testing Library + jsdom | `frontend/vitest.config.ts` |
+| Backend | Bun's built-in test runner (`bun test`) | N/A (built-in) |
+
+### File Naming & Location
+
+- **Backend tests**: Place test files next to the source file with `.test.ts` suffix.
+  ```
+  backend/src/routes/auth.ts        → backend/src/routes/auth.test.ts
+  backend/src/utils/jwt.ts          → backend/src/utils/jwt.test.ts
+  backend/src/utils/validation.ts   → backend/src/utils/validation.test.ts
+  ```
+
+- **Frontend tests**: Place test files next to the component/module with `.test.ts` or `.test.tsx` suffix.
+  ```
+  frontend/src/utils/transcript.ts       → frontend/src/utils/transcript.test.ts
+  frontend/src/components/LikeButton/    → frontend/src/components/LikeButton/LikeButton.test.tsx
+  frontend/src/api/client.ts             → frontend/src/api/client.test.ts
+  ```
+
+### What MUST Be Tested
+
+#### Backend
+- **Route handlers**: Test every API endpoint for success and error cases (400, 401, 403, 404, 500).
+- **Middleware**: Test auth middleware with valid tokens, expired tokens, missing tokens, and malformed tokens.
+- **Utilities**: Test all utility functions (JWT sign/verify, password hashing, validation, JSONL parsing).
+- **Database queries**: Test that queries return expected results and handle edge cases (duplicates, not found, constraint violations).
+
+#### Frontend
+- **Utility functions**: Test all pure functions (transcript parsing, formatters, validators).
+- **Components**: Test rendering, user interactions (click, type, submit), loading states, error states, and conditional rendering.
+- **API client**: Test request formation, error handling, and 401 retry logic (mock fetch).
+- **Hooks**: Test custom hooks with `renderHook()` from React Testing Library.
+
+### Test Structure
+
+Use the **Arrange-Act-Assert** pattern:
+
+```typescript
+// Backend (Bun test runner)
+import { describe, it, expect, beforeEach } from "bun:test";
+
+describe("POST /api/auth/register", () => {
+  it("should create a new user with valid data", async () => {
+    // Arrange
+    const userData = { email: "test@example.com", username: "testuser", password: "securepass123" };
+
+    // Act
+    const response = await app.request("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
+    });
+
+    // Assert
+    expect(response.status).toBe(201);
+    const body = await response.json();
+    expect(body.user.email).toBe(userData.email);
+  });
+
+  it("should return 400 for invalid email", async () => {
+    // ...
+  });
+
+  it("should return 409 for duplicate email", async () => {
+    // ...
+  });
+});
+```
+
+```typescript
+// Frontend (Vitest + React Testing Library)
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+
+describe("LikeButton", () => {
+  it("should render the like count", () => {
+    render(<LikeButton conversationId="1" likeCount={42} hasLiked={false} />);
+    expect(screen.getByText("42")).toBeInTheDocument();
+  });
+
+  it("should call onLikeChange when clicked", async () => {
+    const onLikeChange = vi.fn();
+    render(<LikeButton conversationId="1" likeCount={0} hasLiked={false} onLikeChange={onLikeChange} />);
+    fireEvent.click(screen.getByRole("button"));
+    expect(onLikeChange).toHaveBeenCalled();
+  });
+});
+```
+
+### Running Tests
+
+```bash
+# Backend
+cd backend && bun test                # Run all tests
+cd backend && bun test --watch        # Watch mode
+cd backend && bun test src/routes/    # Run specific directory
+
+# Frontend
+cd frontend && bun run test           # Run all tests (via Vitest)
+cd frontend && bun run test:watch     # Watch mode
+cd frontend && bun run test:coverage  # With coverage report
+```
+
+### PR Checklist for Tests
+
+Every PR **must** satisfy:
+- [ ] Tests were written **before** implementation (TDD).
+- [ ] All new functions/endpoints have corresponding test files.
+- [ ] Tests cover both success and error/edge cases.
+- [ ] All existing tests still pass (`bun test` / `bun run test`).
+- [ ] No skipped tests (`.skip`) without a linked issue explaining why.
 
 ## Important Notes
 
