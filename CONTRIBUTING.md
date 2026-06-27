@@ -148,15 +148,34 @@ bun run test:coverage       # With coverage report
 - **PRs without tests will be rejected.** Every new function, endpoint, and component must have tests.
 - Tests must have been written **before** the implementation code (TDD).
 
-## Code Style
+## Code Style (enforced by Biome.js)
 
-See [.agents/AGENTS.md](.agents/AGENTS.md) for detailed code style rules. Key points:
+This project uses [Biome.js](https://biomejs.dev/) for formatting and linting. All rules are defined in `biome.json` at the project root.
 
-- TypeScript strict mode, no `any` types
+**Key style rules:**
+- 2-space indentation, single quotes, no semicolons, trailing commas
+- 80 character max line width
+- `any` type is forbidden — use `unknown` with type guards
+- Unused variables and imports are errors
 - CSS Modules for frontend styling
 - Raw SQL with parameterized queries on the backend
 - Named exports for React components
 - Conventional commit messages
+
+**Available commands (run from project root):**
+
+```bash
+bun run check         # Check lint + formatting (report only)
+bun run check:fix     # Auto-fix lint + formatting issues
+bun run lint          # Lint only
+bun run format        # Format check only
+```
+
+**Automated enforcement:**
+- **Pre-commit hook** (Husky + lint-staged): automatically runs `biome check --write` on staged files. If unfixable errors exist, the commit is blocked.
+- **Pre-push hook** (Husky): runs all tests. If tests fail, the push is blocked.
+
+> After cloning, run `bun install` at the project root to set up Husky hooks automatically.
 
 ## Database Migrations
 

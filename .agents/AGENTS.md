@@ -41,11 +41,35 @@ convhub/
 
 ## Code Style Rules
 
+This project uses **Biome.js** for formatting and linting. All style rules are enforced automatically via `biome.json` at the project root.
+
+### Formatting (enforced by Biome)
+- **Indentation**: 2 spaces
+- **Quotes**: Single quotes (`'hello'`), double quotes for JSX attributes
+- **Semicolons**: None (ASI — Automatic Semicolon Insertion)
+- **Trailing commas**: Always (ES5 style)
+- **Line width**: 80 characters max
+- **Line endings**: LF (Unix)
+- **Arrow parentheses**: Always (`(x) => x`)
+- **Bracket spacing**: Yes (`{ a, b }`)
+
+### Linting (enforced by Biome)
+- `noExplicitAny` — **error**: never use `any` (use `unknown` + type guards)
+- `useConst` — **error**: use `const` if variable is not reassigned
+- `noUnusedVariables` — **error**: no unused variables
+- `noUnusedImports` — **error**: no unused imports
+- `noVar` — **error**: never use `var`
+- `noDoubleEquals` — **error**: use `===` instead of `==`
+- `useImportType` — **error**: use `import type` for type-only imports
+- `useTemplate` — **error**: use template literals over string concatenation
+
+> **Note:** Test files (`*.test.ts`, `*.test.tsx`) are allowed to use `any` for mocking purposes.
+
 ### General
-- **TypeScript strict mode** — no `any` types. Use `unknown` and narrow with type guards if needed.
-- Prefer `const` over `let`. Never use `var`.
+- **TypeScript strict mode** — enforced by both `tsconfig.json` and Biome.
 - Use `async/await` over `.then()` chains.
 - Use **conventional commits**: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`.
+- **Always run `bun run check:fix` before committing** to auto-fix formatting and lint issues. The pre-commit hook does this automatically for staged files.
 
 ### Frontend
 - **One component per file**, using named exports (not default exports).
@@ -215,9 +239,50 @@ Every PR **must** satisfy:
 - [ ] All existing tests still pass (`bun test` / `bun run test`).
 - [ ] No skipped tests (`.skip`) without a linked issue explaining why.
 
+## Biome & Husky (Automated Quality Gates)
+
+This project uses **Biome.js** for formatting/linting and **Husky** for git hooks. These are enforced automatically — you cannot skip them.
+
+### Git Hooks (via Husky)
+
+| Hook | What it does | When it runs |
+|------|--------------|--------------|
+| `pre-commit` | Runs `lint-staged` → Biome check on staged files only | Every `git commit` |
+| `pre-push` | Runs all tests (backend `bun test` + frontend `bun run test`) | Every `git push` |
+
+### Available Scripts (root `package.json`)
+
+```bash
+bun run lint          # Lint all files (report only)
+bun run lint:fix      # Lint and auto-fix
+bun run format        # Check formatting (report only)
+bun run format:fix    # Auto-format all files
+bun run check         # Lint + format check combined
+bun run check:fix     # Lint + format auto-fix combined
+```
+
+### How lint-staged Works
+
+On `git commit`, only staged files are checked:
+- `*.{ts,tsx,js,jsx}` → `biome check --write` (lint + format + auto-fix)
+- `*.{json,css,md}` → `biome format --write` (format only)
+
+If Biome finds unfixable errors (e.g., `noExplicitAny`), the commit is **blocked**.
+
+### Setup After Cloning
+
+After cloning the repo, run `bun install` at the root to set up Husky hooks:
+
+```bash
+git clone https://github.com/wardix/convhub.git
+cd convhub
+bun install          # Installs deps + sets up Husky hooks via "prepare" script
+```
+
 ## Important Notes
 
 - Do NOT add any npm packages without mentioning it in the PR description.
 - Do NOT modify the database schema without creating a new migration file.
+- Do NOT disable Biome rules with `// biome-ignore` without a linked issue explaining why.
 - Preserve all existing comments and docstrings unrelated to your changes.
 - When in doubt, check existing code patterns and follow them.

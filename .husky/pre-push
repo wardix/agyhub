@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Run backend tests
+if [ -d "backend" ] && [ -f "backend/package.json" ]; then
+  echo "🧪 Running backend tests..."
+  cd backend && bun test
+  cd ..
+fi
+
+# Run frontend tests
+if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+  echo "🧪 Running frontend tests..."
+  cd frontend && bun run test --run
+  cd ..
+fi
+
+echo "✅ All tests passed!"
