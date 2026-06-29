@@ -52,8 +52,8 @@ export const Navbar = () => {
                   to={`/profile/${user?.username}`}
                   className={styles.avatar}
                 >
-                  {user?.avatar_url ? (
-                    <img src={user.avatar_url} alt={user.username} />
+                  {user?.avatarUrl ? (
+                    <img src={user.avatarUrl} alt={user.username} />
                   ) : (
                     <div className={styles.avatarPlaceholder}>
                       {user?.username?.charAt(0).toUpperCase()}

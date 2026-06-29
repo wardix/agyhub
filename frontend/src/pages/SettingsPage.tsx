@@ -7,9 +7,9 @@ import styles from './SettingsPage.module.css'
 export const SettingsPage = () => {
   const { user } = useAuth()
 
-  const [displayName, setDisplayName] = useState(user?.display_name || '')
+  const [displayName, setDisplayName] = useState(user?.displayName || '')
   const [bio, setBio] = useState(user?.bio || '')
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '')
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '')
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [toast, setToast] = useState<{
@@ -19,9 +19,9 @@ export const SettingsPage = () => {
 
   useEffect(() => {
     if (user) {
-      setDisplayName(user.display_name || '')
+      setDisplayName(user.displayName || '')
       setBio(user.bio || '')
-      setAvatarUrl(user.avatar_url || '')
+      setAvatarUrl(user.avatarUrl || '')
     }
   }, [user])
 
@@ -38,9 +38,9 @@ export const SettingsPage = () => {
     try {
       setIsSubmitting(true)
       await api.put<{ user: User }>('/users/me', {
-        display_name: displayName.trim() || null,
+        displayName: displayName.trim() || null,
         bio: bio.trim() || null,
-        avatar_url: avatarUrl.trim() || null,
+        avatarUrl: avatarUrl.trim() || null,
       })
 
       // Update auth context with new user data

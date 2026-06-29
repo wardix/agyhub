@@ -39,10 +39,10 @@ describe('RegisterPage', () => {
                 id: '1',
                 email: 'test@example.com',
                 username: 'testuser',
-                display_name: null,
-                avatar_url: null,
+                displayName: null,
+                avatarUrl: null,
                 bio: null,
-                created_at: '',
+                createdAt: '',
               }
             : null,
           isLoading: false,
@@ -154,7 +154,7 @@ describe('RegisterPage', () => {
       expect(api.post).toHaveBeenCalledWith('/auth/register', {
         email: 'test@example.com',
         username: 'testuser',
-        display_name: null,
+        displayName: null,
         password: 'password123',
       })
       expect(mockRegister).toHaveBeenCalledWith(mockUser)

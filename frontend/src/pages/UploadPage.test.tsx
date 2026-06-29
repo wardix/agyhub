@@ -30,10 +30,10 @@ describe('UploadPage', () => {
                 id: '1',
                 email: 'test@test.com',
                 username: 'test',
-                display_name: null,
-                avatar_url: null,
+                displayName: null,
+                avatarUrl: null,
                 bio: null,
-                created_at: '',
+                createdAt: '',
               }
             : null,
           isLoading,

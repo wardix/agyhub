@@ -146,7 +146,7 @@ export const ProfilePage = () => {
     setProfile({
       ...profile,
       isFollowing,
-      follower_count: profile.follower_count + (isFollowing ? 1 : -1),
+      followerCount: profile.followerCount + (isFollowing ? 1 : -1),
     })
   }
 
@@ -164,7 +164,7 @@ export const ProfilePage = () => {
 
   const isOwnProfile = currentUser?.id === profile.id
 
-  const joinDate = new Date(profile.created_at).toLocaleDateString('en-US', {
+  const joinDate = new Date(profile.createdAt).toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric',
   })
@@ -173,8 +173,8 @@ export const ProfilePage = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.avatar}>
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt={profile.username} />
+          {profile.avatarUrl ? (
+            <img src={profile.avatarUrl} alt={profile.username} />
           ) : (
             profile.username.charAt(0).toUpperCase()
           )}
@@ -182,7 +182,7 @@ export const ProfilePage = () => {
 
         <div className={styles.info}>
           <h1 className={styles.displayName}>
-            {profile.display_name || profile.username}
+            {profile.displayName || profile.username}
           </h1>
           <p className={styles.username}>@{profile.username}</p>
 
@@ -197,7 +197,7 @@ export const ProfilePage = () => {
               onClick={() => setActiveTab('conversations')}
             >
               <span className={styles.statValue}>
-                {profile.conversation_count}
+                {profile.conversationCount}
               </span>
               <span className={styles.statLabel}>Conversations</span>
             </button>
@@ -206,7 +206,7 @@ export const ProfilePage = () => {
               className={styles.statButton}
               onClick={() => setActiveTab('followers')}
             >
-              <span className={styles.statValue}>{profile.follower_count}</span>
+              <span className={styles.statValue}>{profile.followerCount}</span>
               <span className={styles.statLabel}>Followers</span>
             </button>
             <button
@@ -214,9 +214,7 @@ export const ProfilePage = () => {
               className={styles.statButton}
               onClick={() => setActiveTab('following')}
             >
-              <span className={styles.statValue}>
-                {profile.following_count}
-              </span>
+              <span className={styles.statValue}>{profile.followingCount}</span>
               <span className={styles.statLabel}>Following</span>
             </button>
           </div>

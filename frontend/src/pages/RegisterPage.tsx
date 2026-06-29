@@ -79,7 +79,7 @@ export const RegisterPage = () => {
       const data = await api.post('/auth/register', {
         email,
         username,
-        display_name: displayName || null,
+        displayName: displayName || null,
         password,
       })
       register(data.user)

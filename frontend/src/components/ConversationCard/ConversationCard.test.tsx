@@ -24,10 +24,10 @@ describe('ConversationCard', () => {
       id: 'user-1',
       username: 'johndoe',
       email: 'john@example.com',
-      display_name: 'John Doe',
-      avatar_url: null,
+      displayName: 'John Doe',
+      avatarUrl: null,
       bio: null,
-      created_at: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     },
     tags: [
       { id: 'tag-1', name: 'react', color: '#61dafb' },
