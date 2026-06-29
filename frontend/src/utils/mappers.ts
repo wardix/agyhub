@@ -70,9 +70,13 @@ export function mapTranscriptEntry(raw: any): any {
 
 // biome-ignore lint/suspicious/noExplicitAny: raw API response
 export function mapConversationDetail(raw: any): ConversationDetail {
+  const rawTranscript =
+    typeof raw.transcript === 'string'
+      ? JSON.parse(raw.transcript)
+      : raw.transcript
   return {
     ...mapConversation(raw),
-    transcript: raw.transcript?.map(mapTranscriptEntry) || [],
+    transcript: rawTranscript?.map(mapTranscriptEntry) || [],
   }
 }
 

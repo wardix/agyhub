@@ -147,7 +147,7 @@ describe('UploadForm', () => {
     })
     vi.spyOn(transcriptUtils, 'suggestTitle').mockReturnValue('hello')
 
-    vi.mocked(api.post).mockResolvedValue({ id: 'conv-123' })
+    vi.mocked(api.post).mockResolvedValue({ conversation: { id: 'conv-123' } })
 
     renderComponent()
 

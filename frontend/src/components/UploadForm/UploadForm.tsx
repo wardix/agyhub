@@ -135,12 +135,12 @@ export const UploadForm = () => {
         formData.append('tags', tags.map((t) => t.name).join(','))
       }
 
-      const response = await api.post<{ id: string }>(
+      const response = await api.post<{ conversation: { id: string } }>(
         '/conversations',
         formData,
       )
       showToast('Conversation uploaded successfully', 'success')
-      navigate(`/conversations/${response.id}`)
+      navigate(`/conversations/${response.conversation.id}`)
     } catch (err) {
       if (err instanceof ApiError) {
         showToast(err.message, 'error')

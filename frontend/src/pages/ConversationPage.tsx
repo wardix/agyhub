@@ -29,8 +29,10 @@ export const ConversationPage = () => {
     const fetchConversation = async () => {
       try {
         setIsLoading(true)
-        const data = await api.get<ConversationDetail>(`/conversations/${id}`)
-        setConversation(mapConversationDetail(data))
+        const data = await api.get<{ conversation: unknown }>(
+          `/conversations/${id}`,
+        )
+        setConversation(mapConversationDetail(data.conversation))
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Failed to load conversation',

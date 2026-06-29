@@ -81,7 +81,7 @@ describe('ConversationPage', () => {
       if (url.includes('/comments')) {
         return Promise.resolve({ data: [] })
       }
-      return Promise.resolve(mockConversation)
+      return Promise.resolve({ conversation: mockConversation })
     })
 
     render(
