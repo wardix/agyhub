@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../hooks/useToast'
@@ -9,6 +10,7 @@ import styles from './SettingsPage.module.css'
 export const SettingsPage = () => {
   const { user, updateUser, logout } = useAuth()
   const { showToast } = useToast()
+  const navigate = useNavigate()
 
   const [displayName, setDisplayName] = useState(user?.displayName || '')
   const [bio, setBio] = useState(user?.bio || '')
@@ -61,6 +63,7 @@ export const SettingsPage = () => {
         await api.delete('/users/me')
         logout()
         showToast('Account deleted successfully', 'success')
+        navigate('/')
       } catch (_err) {
         showToast('Failed to delete account', 'error')
       } finally {

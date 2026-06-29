@@ -156,5 +156,14 @@ users.put('/me', authRequired, async (c) => {
     return c.json({ error: 'Internal server error', status: 500 }, 500)
   }
 })
+users.delete('/me', authRequired, async (c) => {
+  try {
+    const userId = c.get('userId')
+    await sql.unsafe('DELETE FROM users WHERE id = $1', [userId])
+    return c.json({ message: 'Account deleted successfully' }, 200)
+  } catch (_err) {
+    return c.json({ error: 'Internal server error', status: 500 }, 500)
+  }
+})
 
 export { users }

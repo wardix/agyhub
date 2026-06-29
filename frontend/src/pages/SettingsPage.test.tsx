@@ -10,6 +10,7 @@ import { SettingsPage } from './SettingsPage'
 vi.mock('../api/client', () => ({
   api: {
     put: vi.fn(),
+    delete: vi.fn(),
   },
 }))
 
@@ -115,5 +116,36 @@ describe('SettingsPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Failed to update profile')).toBeInTheDocument()
     })
+  })
+
+  it('handles account deletion successfully', async () => {
+    vi.mocked(api.delete).mockResolvedValue({})
+    // Mock window.confirm
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+    render(
+      <MemoryRouter>
+        <ToastProvider>
+          <SettingsPage />
+          <ToastContainer />
+        </ToastProvider>
+      </MemoryRouter>,
+    )
+
+    const deleteBtn = screen.getByText('Delete Account')
+    fireEvent.click(deleteBtn)
+
+    expect(confirmSpy).toHaveBeenCalled()
+
+    await waitFor(() => {
+      expect(api.delete).toHaveBeenCalledWith('/users/me')
+      const authContext = vi.mocked(useAuthHook.useAuth).mock.results[0].value
+      expect(authContext.logout).toHaveBeenCalled()
+      expect(
+        screen.getByText('Account deleted successfully'),
+      ).toBeInTheDocument()
+    })
+
+    confirmSpy.mockRestore()
   })
 })
