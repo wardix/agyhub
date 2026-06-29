@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, useNavigate } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAuth } from '../../hooks/useAuth'
@@ -100,7 +100,7 @@ describe('FollowButton', () => {
     expect(onFollowChange).not.toHaveBeenCalled()
   })
 
-  it('updates optimistically and calls onFollowChange when clicked', () => {
+  it('updates optimistically and calls onFollowChange when clicked', async () => {
     vi.mocked(useAuth).mockReturnValue({ user: { id: 'currentUser' } } as any)
     const onFollowChange = vi.fn().mockResolvedValue(undefined)
 
@@ -123,5 +123,9 @@ describe('FollowButton', () => {
 
     // API call
     expect(onFollowChange).toHaveBeenCalledWith('otherUser', true)
+
+    await waitFor(() => {
+      expect(btn).not.toBeDisabled()
+    })
   })
 })

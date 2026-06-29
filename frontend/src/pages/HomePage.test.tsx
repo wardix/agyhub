@@ -39,6 +39,10 @@ describe('HomePage', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Upload a Conversation')).toBeInTheDocument()
     expect(screen.getByText('Browse Conversations')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(api.get).toHaveBeenCalled()
+    })
   })
 
   it('fetches and renders trending conversations, recent uploads and tags', async () => {
