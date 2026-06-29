@@ -138,7 +138,7 @@ export const CommentSection = ({ conversationId }: CommentSectionProps) => {
           comments.map((comment) => (
             <div key={comment.id} className={styles.commentItem}>
               <Link
-                to={`/users/${comment.author.username}`}
+                to={`/profile/${comment.author.username}`}
                 className={styles.avatar}
               >
                 {comment.author.username.charAt(0).toUpperCase()}
@@ -146,7 +146,7 @@ export const CommentSection = ({ conversationId }: CommentSectionProps) => {
               <div className={styles.commentContent}>
                 <div className={styles.commentHeader}>
                   <Link
-                    to={`/users/${comment.author.username}`}
+                    to={`/profile/${comment.author.username}`}
                     className={styles.username}
                   >
                     {comment.author.username}

@@ -19,7 +19,7 @@ export const UserCard = ({
 }: UserCardProps) => {
   return (
     <div className={styles.card}>
-      <Link to={`/users/${user.username}`} className={styles.userInfo}>
+      <Link to={`/profile/${user.username}`} className={styles.userInfo}>
         <div className={styles.avatar}>
           {user.username.charAt(0).toUpperCase()}
         </div>
