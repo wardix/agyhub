@@ -113,14 +113,15 @@ export const MessageBubble = ({ entry }: MessageBubbleProps) => {
             {(
               entry.toolCalls as {
                 name: string
-                arguments: Record<string, unknown>
+                args?: Record<string, unknown>
+                arguments?: Record<string, unknown>
               }[]
             ).map((tool, idx) => (
               <ToolCallBlock
                 // biome-ignore lint/suspicious/noArrayIndexKey: order is stable
                 key={idx}
                 name={tool.name}
-                arguments={tool.arguments}
+                arguments={tool.args || tool.arguments || {}}
               />
             ))}
           </div>
