@@ -34,7 +34,7 @@ export interface TranscriptEntry {
   createdAt: string
   content?: string
   thinking?: string
-  toolCalls?: unknown[]
+  tool_calls?: unknown[]
 }
 
 export interface Comment {

@@ -1,0 +1,134 @@
+.container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 100%;
+}
+
+.container.user {
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  flex-shrink: 0;
+}
+
+.userIcon,
+.aiIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+}
+
+.userIcon {
+  background: linear-gradient(135deg, var(--accent-primary), #6366f1);
+}
+
+.aiIcon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.bubble {
+  max-width: calc(100% - 3rem - 36px); /* account for gap and avatar */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.user .content {
+  background: linear-gradient(135deg, var(--accent-primary), #6366f1);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.ai .content {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-bottom-left-radius: 4px;
+}
+
+.userText {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.toolsList {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Markdown styling inside .markdown */
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown p {
+  margin-bottom: 1rem;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.markdown ul,
+.markdown ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.markdown li {
+  margin-bottom: 0.25rem;
+}
+
+.markdown blockquote {
+  border-left: 4px solid var(--border-color);
+  margin: 1rem 0;
+  padding-left: 1rem;
+  color: var(--text-muted);
+}
+
+.inlineCode {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background-color: var(--bg-secondary);
+  padding: 0.125rem 0.25rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85em;
+  color: var(--accent-primary);
+}
+
+.link {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  text-decoration: none;
+}

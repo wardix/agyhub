@@ -1,0 +1,77 @@
+.container {
+  margin-bottom: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  border-left: 3px solid var(--accent-primary);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background-color: var(--bg-secondary);
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.header:hover {
+  background-color: var(--bg-primary);
+}
+
+.icon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+.title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 1rem;
+}
+
+.chevron {
+  transition: transform var(--transition-normal);
+  color: var(--text-muted);
+}
+
+.chevron.expanded {
+  transform: rotate(180deg);
+}
+
+.contentWrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contentWrapper.expanded {
+  max-height: 2000px; /* large enough for content */
+}
+
+.content {
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  overflow-x: auto;
+}
+
+.json {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  color: var(--text-secondary);
+}
