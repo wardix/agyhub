@@ -41,8 +41,9 @@ describe('ExplorePage', () => {
       },
     }
 
-    const mockTags = [{ id: 't1', name: 'react', conversationCount: 10 }]
-
+    const mockTags = {
+      data: [{ id: 't1', name: 'react', conversationCount: 10 }],
+    }
     vi.mocked(api.get).mockImplementation((url) => {
       if (url.includes('/tags')) return Promise.resolve(mockTags)
       if (url.includes('/conversations'))
@@ -77,7 +78,7 @@ describe('ExplorePage', () => {
 
   it('renders empty state if no conversations found', async () => {
     vi.mocked(api.get).mockImplementation((url) => {
-      if (url.includes('/tags')) return Promise.resolve([])
+      if (url.includes('/tags')) return Promise.resolve({ data: [] })
       if (url.includes('/conversations'))
         return Promise.resolve({
           data: [],

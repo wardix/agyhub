@@ -29,8 +29,8 @@ export const ExplorePage = () => {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const data = await api.get<Tag[]>('/tags')
-        setTags(data)
+        const data = await api.get<{ data: Tag[] }>('/tags')
+        setTags(data.data)
       } catch (err) {
         console.error('Failed to load tags', err)
       }

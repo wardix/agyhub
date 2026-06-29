@@ -17,16 +17,16 @@ export const HomePage = () => {
       try {
         setIsLoading(true)
         const [trendingData, recentData, tagsData] = await Promise.all([
-          api.get<Conversation[]>('/conversations/trending'),
+          api.get<{ data: Conversation[] }>('/conversations/trending'),
           api.get<PaginatedResponse<Conversation>>(
             '/conversations?sort=recent&limit=8',
           ),
-          api.get<Tag[]>('/tags'),
+          api.get<{ data: Tag[] }>('/tags'),
         ])
 
-        setTrending(trendingData)
+        setTrending(trendingData.data)
         setRecent(recentData.data)
-        setTags(tagsData.slice(0, 15)) // Show top 15 tags
+        setTags(tagsData.data.slice(0, 15)) // Show top 15 tags
       } catch (error) {
         console.error('Failed to load home data', error)
       } finally {

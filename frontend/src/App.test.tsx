@@ -4,11 +4,7 @@ import { App } from './App'
 
 vi.mock('./api/client', () => ({
   api: {
-    get: vi.fn().mockImplementation((url) => {
-      if (url.includes('tags') || url.includes('trending'))
-        return Promise.resolve([])
-      return Promise.resolve({ data: [] })
-    }),
+    get: vi.fn().mockResolvedValue({ data: [] }),
     post: vi.fn(),
     put: vi.fn(),
     delete: vi.fn(),

@@ -16,11 +16,7 @@ describe('HomePage', () => {
   })
 
   it('renders hero section correctly', async () => {
-    vi.mocked(api.get).mockImplementation((url) => {
-      if (url.includes('tags') || url.includes('trending'))
-        return Promise.resolve([])
-      return Promise.resolve({ data: [] })
-    })
+    vi.mocked(api.get).mockResolvedValue({ data: [] })
 
     render(
       <MemoryRouter>
@@ -36,15 +32,17 @@ describe('HomePage', () => {
   })
 
   it('fetches and renders trending conversations, recent uploads and tags', async () => {
-    const mockTrending = [
-      {
-        id: '1',
-        title: 'Trending Conv',
-        author: { username: 'user1' },
-        tags: [],
-        createdAt: new Date().toISOString(),
-      },
-    ]
+    const mockTrending = {
+      data: [
+        {
+          id: '1',
+          title: 'Trending Conv',
+          author: { username: 'user1' },
+          tags: [],
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    }
     const mockRecent = {
       data: [
         {
@@ -56,8 +54,9 @@ describe('HomePage', () => {
         },
       ],
     }
-    const mockTags = [{ id: 't1', name: 'react', conversationCount: 10 }]
-
+    const mockTags = {
+      data: [{ id: 't1', name: 'react', conversationCount: 10 }],
+    }
     vi.mocked(api.get).mockImplementation((url) => {
       if (url.includes('trending')) return Promise.resolve(mockTrending)
       if (url.includes('sort=recent')) return Promise.resolve(mockRecent)
