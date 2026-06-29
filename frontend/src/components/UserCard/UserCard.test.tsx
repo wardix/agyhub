@@ -13,10 +13,10 @@ describe('UserCard', () => {
     id: 'user-1',
     username: 'johndoe',
     email: 'john@example.com',
-    display_name: 'John Doe',
-    avatar_url: null,
+    displayName: 'John Doe',
+    avatarUrl: null,
     bio: 'Software engineer and AI enthusiast',
-    created_at: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
   }
 
   it('renders user details correctly', () => {

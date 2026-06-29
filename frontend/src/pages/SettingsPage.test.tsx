@@ -20,10 +20,10 @@ describe('SettingsPage', () => {
     id: 'user-1',
     email: 'test@example.com',
     username: 'testuser',
-    display_name: 'Test Name',
-    avatar_url: 'https://example.com/avatar.jpg',
+    displayName: 'Test Name',
+    avatarUrl: 'https://example.com/avatar.jpg',
     bio: 'Test bio',
-    created_at: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
   }
 
   beforeEach(() => {
@@ -71,9 +71,9 @@ describe('SettingsPage', () => {
 
     await waitFor(() => {
       expect(api.put).toHaveBeenCalledWith('/users/me', {
-        display_name: 'New Name',
+        displayName: 'New Name',
         bio: 'Test bio',
-        avatar_url: 'https://example.com/avatar.jpg',
+        avatarUrl: 'https://example.com/avatar.jpg',
       })
       expect(
         screen.getByText('Profile updated successfully'),

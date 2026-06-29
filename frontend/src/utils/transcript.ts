@@ -31,7 +31,7 @@ export const parseTranscriptFile = (file: File): Promise<TranscriptEntry[]> => {
               source: entry.source ?? 'UNKNOWN',
               type: entry.type ?? 'UNKNOWN',
               status: entry.status ?? 'DONE',
-              createdAt: entry.created_at ?? new Date().toISOString(),
+              createdAt: entry.createdAt ?? new Date().toISOString(),
               content: entry.content,
               thinking: entry.thinking,
               tool_calls: entry.tool_calls,

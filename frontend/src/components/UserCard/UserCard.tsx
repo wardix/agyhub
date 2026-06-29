@@ -25,8 +25,8 @@ export const UserCard = ({
         </div>
         <div className={styles.details}>
           <div className={styles.nameRow}>
-            {user.display_name && (
-              <span className={styles.displayName}>{user.display_name}</span>
+            {user.displayName && (
+              <span className={styles.displayName}>{user.displayName}</span>
             )}
             <span className={styles.username}>@{user.username}</span>
           </div>

@@ -2,16 +2,16 @@ export interface User {
   id: string
   email: string
   username: string
-  display_name: string | null
-  avatar_url: string | null
+  displayName: string | null
+  avatarUrl: string | null
   bio: string | null
-  created_at: string
+  createdAt: string
 }
 
 export interface UserProfile extends User {
-  follower_count: number
-  following_count: number
-  conversation_count: number
+  followerCount: number
+  followingCount: number
+  conversationCount: number
   isFollowing: boolean
 }
 
