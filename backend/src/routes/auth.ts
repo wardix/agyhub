@@ -129,66 +129,7 @@ auth.post('/login', loginLimiter, async (c) => {
 })
 
 auth.post('/google', async (c) => {
-  // In a real implementation, we would verify the Google credential using google-auth-library
-  // Since we don't have it installed, we'll implement a stub that simulates verification
-  try {
-    const { credential } = await c.req.json()
-    if (!credential)
-      return c.json({ error: 'Credential required', status: 400 }, 400)
-
-    // STUB: normally verify Google ID token here and extract payload
-    // We assume the credential string contains user info for testing purposes (e.g. JSON stringified)
-    let payload: Record<string, string>
-    try {
-      payload = JSON.parse(credential)
-    } catch {
-      return c.json(
-        { error: 'Invalid Google credential format (test stub)', status: 400 },
-        400,
-      )
-    }
-
-    const { email, sub: oauthId, name, picture } = payload
-
-    let [user] = await sql`
-      SELECT * FROM users WHERE email = ${email} OR (oauth_provider = 'google' AND oauth_id = ${oauthId})
-    `
-
-    if (!user) {
-      const username = `${email.split('@')[0]}_${Math.random().toString(36).substring(2, 7)}`
-
-      const rows = await sql`
-        INSERT INTO users (email, username, display_name, avatar_url, oauth_provider, oauth_id)
-        VALUES (${email}, ${username}, ${name}, ${picture}, 'google', ${oauthId})
-        RETURNING *
-      `
-      user = rows[0]
-    } else if (!user.oauth_provider) {
-      const rows = await sql`
-        UPDATE users SET oauth_provider = 'google', oauth_id = ${oauthId} 
-        WHERE id = ${user.id} RETURNING *
-      `
-      user = rows[0]
-    }
-
-    const accessToken = await signAccessToken(user.id)
-    const refreshToken = await signRefreshToken(user.id)
-
-    const rtHash = await hashPassword(refreshToken)
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-
-    await sql`
-      INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
-      VALUES (${user.id}, ${rtHash}, ${expiresAt.toISOString()})
-    `
-
-    setAuthCookies(c, accessToken, refreshToken)
-
-    const { password_hash, oauth_provider, oauth_id, ...userData } = user
-    return c.json({ user: userData }, 200)
-  } catch (_err) {
-    return c.json({ error: 'Internal server error', status: 500 }, 500)
-  }
+  return c.json({ error: 'Not Implemented', status: 501 }, 501)
 })
 
 auth.post('/refresh', async (c) => {

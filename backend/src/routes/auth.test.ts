@@ -104,24 +104,16 @@ describe('auth routes', () => {
   })
 
   describe('POST /api/auth/google', () => {
-    it('should handle google oauth stub', async () => {
-      const googleStub = JSON.stringify({
-        email: 'google@example.com',
-        sub: 'google123',
-        name: 'Google User',
-        picture: 'http://example.com/pic.jpg',
-      })
-
+    it('should return 501 Not Implemented', async () => {
       const res = await app.request('/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ credential: googleStub }),
+        body: JSON.stringify({ credential: 'fake' }),
       })
 
-      expect(res.status).toBe(200)
+      expect(res.status).toBe(501)
       const data = await res.json()
-      expect(data.user.email).toBe('google@example.com')
-      expect(data.user.oauth_provider).toBeUndefined() // Should not return oauth info
+      expect(data.error).toBe('Not Implemented')
     })
   })
 
