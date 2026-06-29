@@ -50,14 +50,14 @@ export const ConversationPage = () => {
     try {
       setIsLiking(true)
       if (conversation.hasLiked) {
-        await api.delete(`/likes/${id}`)
+        await api.delete(`/conversations/${id}/like`)
         setConversation({
           ...conversation,
           hasLiked: false,
           likeCount: conversation.likeCount - 1,
         })
       } else {
-        await api.post(`/likes/${id}`)
+        await api.post(`/conversations/${id}/like`)
         setConversation({
           ...conversation,
           hasLiked: true,
