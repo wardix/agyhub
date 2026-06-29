@@ -93,8 +93,6 @@ describe('users routes', () => {
   })
 
   it('should return 400 when no fields provided', async () => {
-    if (!userId) return
-
     const res = await app.request('/api/users/me', {
       method: 'PUT',
       headers: {
@@ -103,7 +101,30 @@ describe('users routes', () => {
       },
       body: JSON.stringify({}),
     })
+    expect(res.status).toBe(400)
+  })
 
+  it('should return 400 when bio exceeds 250 chars', async () => {
+    const res = await app.request('/api/users/me', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: `access_token=${authToken}`,
+      },
+      body: JSON.stringify({ bio: 'a'.repeat(251) }),
+    })
+    expect(res.status).toBe(400)
+  })
+
+  it('should return 400 when display_name exceeds 100 chars', async () => {
+    const res = await app.request('/api/users/me', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: `access_token=${authToken}`,
+      },
+      body: JSON.stringify({ display_name: 'a'.repeat(101) }),
+    })
     expect(res.status).toBe(400)
   })
 

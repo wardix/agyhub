@@ -41,8 +41,11 @@ users.get('/:username/conversations', authOptional, async (c) => {
   try {
     const username = c.req.param('username')
     const sort = c.req.query('sort') || 'recent'
-    const page = Number.parseInt(c.req.query('page') || '1', 10)
-    const limit = Number.parseInt(c.req.query('limit') || '10', 10)
+    const pageRaw = Number.parseInt(c.req.query('page') || '1', 10)
+    const page = Number.isNaN(pageRaw) || pageRaw < 1 ? 1 : pageRaw
+    const limitRaw = Number.parseInt(c.req.query('limit') || '10', 10)
+    const limit =
+      Number.isNaN(limitRaw) || limitRaw < 1 ? 10 : Math.min(limitRaw, 100)
     const offset = (page - 1) * limit
     const currentUserId = c.get('userId')
 
@@ -125,10 +128,25 @@ users.put('/me', authRequired, async (c) => {
     const args: string[] = []
 
     if (body.display_name !== undefined) {
+      if (
+        typeof body.display_name === 'string' &&
+        body.display_name.length > 100
+      ) {
+        return c.json(
+          { error: 'Display name cannot exceed 100 characters', status: 400 },
+          400,
+        )
+      }
       args.push(body.display_name)
       updates.push(`display_name = $${args.length}`)
     }
     if (body.bio !== undefined) {
+      if (typeof body.bio === 'string' && body.bio.length > 250) {
+        return c.json(
+          { error: 'Bio cannot exceed 250 characters', status: 400 },
+          400,
+        )
+      }
       args.push(body.bio)
       updates.push(`bio = $${args.length}`)
     }

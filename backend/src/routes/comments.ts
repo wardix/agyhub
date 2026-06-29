@@ -8,8 +8,11 @@ const comments = new Hono()
 conversationComments.get('/:id/comments', authOptional, async (c) => {
   try {
     const conversationId = c.req.param('id')
-    const page = Number.parseInt(c.req.query('page') || '1', 10)
-    const limit = Number.parseInt(c.req.query('limit') || '20', 10)
+    const pageRaw = Number.parseInt(c.req.query('page') || '1', 10)
+    const page = Number.isNaN(pageRaw) || pageRaw < 1 ? 1 : pageRaw
+    const limitRaw = Number.parseInt(c.req.query('limit') || '20', 10)
+    const limit =
+      Number.isNaN(limitRaw) || limitRaw < 1 ? 20 : Math.min(limitRaw, 100)
     const offset = (page - 1) * limit
 
     const [conversation] = await sql.unsafe(

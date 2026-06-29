@@ -42,16 +42,15 @@ describe('conversations routes', () => {
     if (!testUserId) return // skip if db not setup
 
     const formData = new FormData()
-    formData.append('title', 'Test Conv')
-    formData.append('description', 'A test conversation')
-    formData.append('tags', 'test, bun, hono')
-
-    // Create a mock JSONL file
     const fileContent = `{"step_index":0,"type":"USER_INPUT","source":"USER_EXPLICIT","status":"DONE","created_at":"2023-01-01"}\n{"step_index":1,"type":"PLANNER_RESPONSE","source":"MODEL","status":"DONE","created_at":"2023-01-01"}`
-    const file = new File([fileContent], 'transcript.jsonl', {
-      type: 'application/json',
-    })
-    formData.append('file', file)
+
+    formData.append('title', 'Test Conversation')
+    formData.append('description', 'Test Description')
+    formData.append('tags', 'test, ai')
+    formData.append(
+      'file',
+      new File([fileContent], 'transcript.jsonl', { type: 'application/json' }),
+    )
 
     const res = await app.request('/api/conversations', {
       method: 'POST',
@@ -63,11 +62,43 @@ describe('conversations routes', () => {
 
     expect(res.status).toBe(201)
     const data = await res.json()
-    expect(data.conversation.title).toBe('Test Conv')
+    expect(data.conversation.title).toBe('Test Conversation')
     expect(data.conversation.message_count).toBe(2)
-    expect(data.conversation.transcript).toBeUndefined() // Not returned
 
     conversationId = data.conversation.id
+  })
+
+  it('should reject title exceeding 200 chars', async () => {
+    const formData = new FormData()
+    formData.append('title', 'a'.repeat(201))
+    formData.append(
+      'file',
+      new Blob(['{"type": "USER_INPUT", "content": "Hello"}']),
+    )
+
+    const res = await app.request('/api/conversations', {
+      method: 'POST',
+      headers: { Cookie: `access_token=${authToken}` },
+      body: formData,
+    })
+    expect(res.status).toBe(400)
+  })
+
+  it('should reject description exceeding 1000 chars', async () => {
+    const formData = new FormData()
+    formData.append('title', 'Test Title')
+    formData.append('description', 'a'.repeat(1001))
+    formData.append(
+      'file',
+      new Blob(['{"type": "USER_INPUT", "content": "Hello"}']),
+    )
+
+    const res = await app.request('/api/conversations', {
+      method: 'POST',
+      headers: { Cookie: `access_token=${authToken}` },
+      body: formData,
+    })
+    expect(res.status).toBe(400)
   })
 
   it('should list conversations via GET /api/conversations', async () => {

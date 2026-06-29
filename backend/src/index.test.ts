@@ -11,3 +11,20 @@ describe('Health Check Endpoint', () => {
     expect(await res.json()).toEqual({ status: 'ok' })
   })
 })
+
+describe('Global Middleware', () => {
+  it('should reject payloads larger than 1MB', async () => {
+    const app = (await import('./index.ts')).default
+    // Generate a payload slightly larger than 1MB
+    const largePayload = 'a'.repeat(1024 * 1024 + 10)
+    const req = new Request('http://localhost/api/health', {
+      method: 'POST',
+      body: largePayload,
+    })
+    const res = await app.fetch(req)
+
+    expect(res.status).toBe(413)
+    const data = await res.json()
+    expect(data.error).toBe('Payload Too Large')
+  })
+})
