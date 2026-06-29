@@ -11,6 +11,7 @@ import {
   ExplorePage,
   HomePage,
   LoginPage,
+  NotFoundPage,
   ProfilePage,
   RegisterPage,
   SettingsPage,
@@ -112,6 +113,16 @@ const AppRoutes = () => {
                 <SettingsPage />
               </ErrorBoundary>
             </ProtectedRoute>
+          }
+        />
+
+        {/* Catch-all Not Found Route */}
+        <Route
+          path="*"
+          element={
+            <ErrorBoundary>
+              <NotFoundPage />
+            </ErrorBoundary>
           }
         />
       </Route>
