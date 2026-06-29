@@ -10,6 +10,25 @@ import {
 
 const conversations = new Hono()
 
+export const viewDebounceMap = new Map<string, number>()
+export const VIEW_DEBOUNCE_MS = 60 * 60 * 1000 // 1 hour
+
+// Periodically clean up the map to prevent memory leaks
+const cleanupInterval = setInterval(
+  () => {
+    const now = Date.now()
+    for (const [key, timestamp] of viewDebounceMap.entries()) {
+      if (now - timestamp > VIEW_DEBOUNCE_MS) {
+        viewDebounceMap.delete(key)
+      }
+    }
+  },
+  5 * 60 * 1000,
+)
+
+// Unref to prevent interval from keeping the event loop alive during testing
+if (cleanupInterval.unref) cleanupInterval.unref()
+
 conversations.post('/', authRequired, async (c) => {
   try {
     const userId = c.get('userId')
@@ -269,8 +288,18 @@ conversations.get('/:id', authOptional, async (c) => {
       return c.json({ error: 'Conversation not found', status: 404 }, 404)
     }
 
-    // Increment view count
-    await sql`UPDATE conversations SET view_count = view_count + 1 WHERE id = ${id}`
+    const ip = c.req.header('x-forwarded-for') || 'unknown'
+    const viewKey = `${ip}:${id}`
+    const now = Date.now()
+    const lastViewed = viewDebounceMap.get(viewKey)
+    const isAuthor = rows[0].user_id === userId
+
+    if (!isAuthor && (!lastViewed || now - lastViewed > VIEW_DEBOUNCE_MS)) {
+      viewDebounceMap.set(viewKey, now)
+      // Increment view count
+      await sql`UPDATE conversations SET view_count = view_count + 1 WHERE id = ${id}`
+      rows[0].view_count = (rows[0].view_count || 0) + 1
+    }
 
     return c.json({ conversation: rows[0] }, 200)
   } catch (_err) {
