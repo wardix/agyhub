@@ -59,7 +59,7 @@ users.get('/:username/conversations', authOptional, async (c) => {
     let query = `
       SELECT c.id, c.title, c.description, c.message_count, c.like_count, 
              c.comment_count, c.view_count, c.created_at,
-             u.username, u.avatar_url,
+             json_build_object('id', c.user_id, 'username', u.username, 'avatar_url', u.avatar_url) as author,
              COALESCE(json_agg(json_build_object('id', tg.id, 'name', tg.name, 'color', tg.color)) FILTER (WHERE tg.id IS NOT NULL), '[]') as tags
     `
 

@@ -28,7 +28,8 @@ conversationComments.get('/:id/comments', authOptional, async (c) => {
 
     const rows = await sql.unsafe(
       `
-      SELECT c.id, c.content, c.created_at, u.username, u.display_name, u.avatar_url
+      SELECT c.id, c.content, c.created_at, 
+             json_build_object('id', c.user_id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url) as author
       FROM comments c
       JOIN users u ON c.user_id = u.id
       WHERE c.conversation_id = $1
@@ -92,7 +93,7 @@ conversationComments.post('/:id/comments', authRequired, async (c) => {
     )
 
     const [user] = await sql.unsafe(
-      'SELECT username, display_name, avatar_url FROM users WHERE id = $1',
+      'SELECT id, username, display_name, avatar_url FROM users WHERE id = $1',
       [userId],
     )
 
@@ -100,7 +101,7 @@ conversationComments.post('/:id/comments', authRequired, async (c) => {
       {
         comment: {
           ...comment,
-          ...user,
+          author: user,
         },
       },
       201,

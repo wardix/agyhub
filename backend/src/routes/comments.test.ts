@@ -59,7 +59,7 @@ describe('comments routes', () => {
     expect(res.status).toBe(201)
     const data = await res.json()
     expect(data.comment.content).toBe('Hello World')
-    expect(data.comment.username).toBe('commenter')
+    expect(data.comment.author.username).toBe('commenter')
     commentId = data.comment.id
   })
 

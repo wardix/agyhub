@@ -100,7 +100,7 @@ conversations.get('/', authOptional, async (c) => {
     let query = `
       SELECT c.id, c.title, c.description, c.message_count, c.like_count, 
              c.comment_count, c.view_count, c.created_at,
-             u.username, u.avatar_url,
+             json_build_object('id', c.user_id, 'username', u.username, 'avatar_url', u.avatar_url) as author,
              COALESCE(json_agg(json_build_object('id', t.id, 'name', t.name, 'color', t.color)) FILTER (WHERE t.id IS NOT NULL), '[]') as tags
       `
 
@@ -179,7 +179,7 @@ conversations.get('/trending', authOptional, async (c) => {
     let query = `
       SELECT c.id, c.title, c.description, c.message_count, c.like_count, 
              c.comment_count, c.view_count, c.created_at,
-             u.username, u.avatar_url,
+             json_build_object('id', c.user_id, 'username', u.username, 'avatar_url', u.avatar_url) as author,
              COALESCE(json_agg(json_build_object('id', t.id, 'name', t.name, 'color', t.color)) FILTER (WHERE t.id IS NOT NULL), '[]') as tags
     `
 
@@ -216,7 +216,7 @@ conversations.get('/:id', authOptional, async (c) => {
 
     let query = `
       SELECT c.*,
-             u.username, u.avatar_url,
+             json_build_object('id', c.user_id, 'username', u.username, 'avatar_url', u.avatar_url) as author,
              COALESCE(json_agg(json_build_object('id', t.id, 'name', t.name, 'color', t.color)) FILTER (WHERE t.id IS NOT NULL), '[]') as tags
     `
 
