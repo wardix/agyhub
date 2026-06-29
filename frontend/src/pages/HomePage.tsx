@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { ConversationCard } from '../components/ConversationCard/ConversationCard'
+import { ConversationCardSkeleton } from '../components/Skeleton'
 import type { Conversation, PaginatedResponse, Tag } from '../types'
 import styles from './HomePage.module.css'
 
@@ -80,9 +81,11 @@ export const HomePage = () => {
 
         <main className={styles.main}>
           {isLoading ? (
-            <div className={styles.loadingState}>
-              <div className={styles.spinner} />
-              <p>Loading amazing conversations...</p>
+            <div className={styles.grid}>
+              {Array.from({ length: 8 }).map((_, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: Skeletons are static and order doesn't change
+                <ConversationCardSkeleton key={`skeleton-${i}`} />
+              ))}
             </div>
           ) : (
             <>

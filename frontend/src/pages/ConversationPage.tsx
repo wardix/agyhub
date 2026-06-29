@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import { CommentSection } from '../components/CommentSection/CommentSection'
 import { ConversationViewer } from '../components/ConversationViewer/ConversationViewer'
 import { LikeButton } from '../components/LikeButton/LikeButton'
+import { TranscriptSkeleton } from '../components/Skeleton'
 import { useAuth } from '../hooks/useAuth'
 import type { ConversationDetail } from '../types'
 import styles from './ConversationPage.module.css'
@@ -81,9 +82,8 @@ export const ConversationPage = () => {
 
   if (isLoading) {
     return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner} />
-        <p>Loading conversation...</p>
+      <div className={styles.container}>
+        <TranscriptSkeleton />
       </div>
     )
   }

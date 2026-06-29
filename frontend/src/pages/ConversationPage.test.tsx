@@ -50,7 +50,7 @@ describe('ConversationPage', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByText('Loading conversation...')).toBeInTheDocument()
+    expect(screen.getByTestId('transcript-skeleton')).toBeInTheDocument()
   })
 
   it('renders conversation data correctly', async () => {

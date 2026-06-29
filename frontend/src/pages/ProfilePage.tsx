@@ -4,6 +4,10 @@ import { Link, useParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { ConversationCard } from '../components/ConversationCard/ConversationCard'
 import { FollowButton } from '../components/FollowButton/FollowButton'
+import {
+  ConversationCardSkeleton,
+  ProfileSkeleton,
+} from '../components/Skeleton'
 import { UserCard } from '../components/UserCard/UserCard'
 import { useAuth } from '../hooks/useAuth'
 import type {
@@ -152,7 +156,11 @@ export const ProfilePage = () => {
   }
 
   if (isLoadingProfile) {
-    return <div className={styles.loading}>Loading profile...</div>
+    return (
+      <div className={styles.container}>
+        <ProfileSkeleton />
+      </div>
+    )
   }
 
   if (error || !profile) {
@@ -316,7 +324,12 @@ export const ProfilePage = () => {
             !hasMore &&
             conversations.length === 0 &&
             usersList.length === 0 && (
-              <div className={styles.loading}>Loading...</div>
+              <div className={styles.grid}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: Skeletons are static and order doesn't change
+                  <ConversationCardSkeleton key={`skeleton-${i}`} />
+                ))}
+              </div>
             )}
         </div>
       </div>

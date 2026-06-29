@@ -55,7 +55,7 @@ describe('ProfilePage', () => {
         </Routes>
       </MemoryRouter>,
     )
-    expect(screen.getByText('Loading profile...')).toBeInTheDocument()
+    expect(screen.getByTestId('profile-skeleton')).toBeInTheDocument()
   })
 
   it('renders 404 when user not found', async () => {
