@@ -94,6 +94,8 @@ conversations.get('/', authOptional, async (c) => {
     const offset = (page - 1) * limit
     const userId = c.get('userId')
 
+    const args: string[] = []
+
     // Build the query
     let query = `
       SELECT c.id, c.title, c.description, c.message_count, c.like_count, 
@@ -103,7 +105,8 @@ conversations.get('/', authOptional, async (c) => {
       `
 
     if (userId) {
-      query += `, EXISTS(SELECT 1 FROM likes l WHERE l.conversation_id = c.id AND l.user_id = '${userId}') as "hasLiked" `
+      args.push(userId as string)
+      query += `, EXISTS(SELECT 1 FROM likes l WHERE l.conversation_id = c.id AND l.user_id = $${args.length}) as "hasLiked" `
     } else {
       query += `, false as "hasLiked" `
     }
@@ -117,13 +120,15 @@ conversations.get('/', authOptional, async (c) => {
     `
 
     if (q) {
-      query += ` AND (c.title ILIKE '%${q.replace(/'/g, "''")}%' OR c.description ILIKE '%${q.replace(/'/g, "''")}%')`
+      args.push(`%${q}%`)
+      query += ` AND (c.title ILIKE $${args.length} OR c.description ILIKE $${args.length})`
     }
     if (tag) {
+      args.push(tag)
       query += ` AND EXISTS (
         SELECT 1 FROM conversation_tags ct2 
         JOIN tags t2 ON ct2.tag_id = t2.id 
-        WHERE ct2.conversation_id = c.id AND t2.name = '${tag.replace(/'/g, "''")}'
+        WHERE ct2.conversation_id = c.id AND t2.name = $${args.length}
       )`
     }
 
@@ -139,13 +144,13 @@ conversations.get('/', authOptional, async (c) => {
 
     // Get count first
     const countQuery = `SELECT COUNT(*) FROM (${query}) AS subquery`
-    const countRes = await sql.unsafe(countQuery)
+    const countRes = await sql.unsafe(countQuery, args)
     const total = Number.parseInt(countRes[0].count, 10)
 
     // Add pagination
     query += ` LIMIT ${limit} OFFSET ${offset}`
 
-    const rows = await sql.unsafe(query)
+    const rows = await sql.unsafe(query, args)
 
     return c.json(
       {
@@ -169,6 +174,7 @@ conversations.get('/trending', authOptional, async (c) => {
   try {
     const userId = c.get('userId')
     const limit = 10
+    const args: string[] = []
 
     let query = `
       SELECT c.id, c.title, c.description, c.message_count, c.like_count, 
@@ -178,7 +184,8 @@ conversations.get('/trending', authOptional, async (c) => {
     `
 
     if (userId) {
-      query += `, EXISTS(SELECT 1 FROM likes l WHERE l.conversation_id = c.id AND l.user_id = '${userId}') as "hasLiked" `
+      args.push(userId as string)
+      query += `, EXISTS(SELECT 1 FROM likes l WHERE l.conversation_id = c.id AND l.user_id = $${args.length}) as "hasLiked" `
     } else {
       query += `, false as "hasLiked" `
     }
@@ -194,7 +201,7 @@ conversations.get('/trending', authOptional, async (c) => {
       LIMIT ${limit}
     `
 
-    const rows = await sql.unsafe(query)
+    const rows = await sql.unsafe(query, args)
     return c.json({ data: rows }, 200)
   } catch (_err) {
     return c.json({ error: 'Internal server error', status: 500 }, 500)
@@ -205,6 +212,7 @@ conversations.get('/:id', authOptional, async (c) => {
   try {
     const id = c.req.param('id')
     const userId = c.get('userId')
+    const args: string[] = []
 
     let query = `
       SELECT c.*,
@@ -213,21 +221,24 @@ conversations.get('/:id', authOptional, async (c) => {
     `
 
     if (userId) {
-      query += `, EXISTS(SELECT 1 FROM likes l WHERE l.conversation_id = c.id AND l.user_id = '${userId}') as "hasLiked" `
+      args.push(userId as string)
+      query += `, EXISTS(SELECT 1 FROM likes l WHERE l.conversation_id = c.id AND l.user_id = $${args.length}) as "hasLiked" `
     } else {
       query += `, false as "hasLiked" `
     }
+
+    args.push(id)
 
     query += `
       FROM conversations c
       JOIN users u ON c.user_id = u.id
       LEFT JOIN conversation_tags ct ON c.id = ct.conversation_id
       LEFT JOIN tags t ON ct.tag_id = t.id
-      WHERE c.id = '${id.replace(/'/g, "''")}'
+      WHERE c.id = $${args.length}
       GROUP BY c.id, u.id
     `
 
-    const rows = await sql.unsafe(query)
+    const rows = await sql.unsafe(query, args)
 
     if (rows.length === 0) {
       return c.json({ error: 'Conversation not found', status: 404 }, 404)
@@ -260,7 +271,7 @@ conversations.delete('/:id', authRequired, async (c) => {
 
     await sql`DELETE FROM conversations WHERE id = ${id}`
 
-    return c.json({ success: true }, 200)
+    return new Response(null, { status: 204 })
   } catch (_err) {
     return c.json({ error: 'Internal server error', status: 500 }, 500)
   }

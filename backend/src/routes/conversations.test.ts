@@ -131,6 +131,6 @@ describe('conversations routes', () => {
         Cookie: `access_token=${authToken}`,
       },
     })
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(204)
   })
 })
