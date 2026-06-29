@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { corsMiddleware } from './middleware/cors.js'
 
 import { auth } from './routes/auth.js'
+import { conversations } from './routes/conversations.js'
 
 const app = new Hono()
 
@@ -9,6 +10,7 @@ const app = new Hono()
 app.use('*', corsMiddleware)
 
 app.route('/api/auth', auth)
+app.route('/api/conversations', conversations)
 
 // Health check endpoint
 app.get('/api/health', (c) => {
