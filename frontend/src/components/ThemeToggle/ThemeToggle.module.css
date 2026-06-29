@@ -1,0 +1,25 @@
+.toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.toggle:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.toggle svg {
+  transition: transform var(--transition-fast);
+}
+
+.toggle:active svg {
+  transform: scale(0.9);
+}
