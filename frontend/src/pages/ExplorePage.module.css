@@ -247,6 +247,22 @@
   max-width: 400px;
 }
 
+.retryBtn {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.retryBtn:hover {
+  opacity: 0.9;
+}
+
 @media (max-width: 900px) {
   .layout {
     grid-template-columns: 1fr;

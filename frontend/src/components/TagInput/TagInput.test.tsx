@@ -12,6 +12,12 @@ vi.mock('../../api/client', async () => {
   }
 })
 
+vi.mock('../../hooks/useToast', () => ({
+  useToast: () => ({
+    showToast: vi.fn(),
+  }),
+}))
+
 describe('TagInput', () => {
   beforeEach(() => {
     vi.clearAllMocks()
