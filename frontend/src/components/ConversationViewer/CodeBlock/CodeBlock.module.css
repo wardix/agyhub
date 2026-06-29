@@ -1,0 +1,65 @@
+.container {
+  margin: 1rem 0;
+  border-radius: var(--radius-md);
+  background-color: #0d1117; /* GitHub dark bg */
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #161b22; /* GitHub dark secondary */
+  border-bottom: 1px solid var(--border-color);
+}
+
+.language {
+  font-size: 0.75rem;
+  color: #8b949e;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.copyButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.copyButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #c9d1d9;
+}
+
+.copiedText {
+  font-size: 0.75rem;
+  color: var(--success-color);
+}
+
+.codeWrapper {
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.pre {
+  margin: 0;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background: transparent !important;
+}
