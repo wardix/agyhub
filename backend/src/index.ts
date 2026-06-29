@@ -5,6 +5,7 @@ import { corsMiddleware } from './middleware/cors.js'
 import { auth } from './routes/auth.js'
 import { comments, conversationComments } from './routes/comments.js'
 import { conversations } from './routes/conversations.js'
+import { feed } from './routes/feed.js'
 import { follows } from './routes/follows.js'
 import { likes } from './routes/likes.js'
 import { tags } from './routes/tags.js'
@@ -34,6 +35,7 @@ app.route('/api/comments', comments)
 app.route('/api/tags', tags)
 app.route('/api/users', follows)
 app.route('/api/users', users)
+app.route('/api/feed', feed)
 
 // Health check endpoint
 app.get('/api/health', (c) => {

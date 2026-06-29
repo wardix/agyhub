@@ -109,9 +109,14 @@ export const Navbar = () => {
               Explore
             </Link>
             {isAuthenticated && (
-              <Link to="/upload" className={styles.navLink}>
-                Upload
-              </Link>
+              <>
+                <Link to="/feed" className={styles.navLink}>
+                  Feed
+                </Link>
+                <Link to="/upload" className={styles.navLink}>
+                  Upload
+                </Link>
+              </>
             )}
 
             <div className={styles.actions}>
