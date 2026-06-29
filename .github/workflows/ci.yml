@@ -46,14 +46,14 @@ jobs:
       - name: Run linter and formatter checks
         run: bun run check
 
+      - name: Run Database Migrations
+        run: cd backend && bun run db:migrate
+
       - name: Run Backend Tests
         run: cd backend && bun test
 
       - name: Run Frontend Tests
         run: cd frontend && bun run test
-
-      - name: Run Database Migrations
-        run: cd backend && bun run db:migrate
 
       - name: Install Playwright E2E dependencies
         run: cd e2e && npm ci
