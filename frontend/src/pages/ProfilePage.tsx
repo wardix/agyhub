@@ -141,7 +141,7 @@ export const ProfilePage = () => {
     fetchTabData()
   }
 
-  const handleFollowChange = (isFollowing: boolean) => {
+  const handleFollowChange = (_userId: string, isFollowing: boolean) => {
     if (!profile) return
     setProfile({
       ...profile,
@@ -229,7 +229,7 @@ export const ProfilePage = () => {
             ) : (
               <FollowButton
                 userId={profile.id}
-                initialIsFollowing={profile.isFollowing}
+                isFollowing={profile.isFollowing}
                 onFollowChange={handleFollowChange}
               />
             )}
