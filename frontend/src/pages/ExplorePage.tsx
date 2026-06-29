@@ -20,6 +20,7 @@ export const ExplorePage = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const [activeTag, setActiveTag] = useState(initialTag)
   const [activeSort, setActiveSort] = useState<SortOption>(initialSort)
@@ -99,11 +100,20 @@ export const ExplorePage = () => {
             placeholder="Search conversations by title, author, or content..."
           />
         </div>
+        <button
+          className={styles.mobileFilterBtn}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          type="button"
+        >
+          {isSidebarOpen ? 'Hide Filters' : 'Show Filters'}
+        </button>
       </div>
 
       <div className={styles.layout}>
         {/* Sidebar */}
-        <aside className={styles.sidebar}>
+        <aside
+          className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}
+        >
           <div className={styles.sidebarSection}>
             <h3 className={styles.sidebarTitle}>Sort By</h3>
             <div className={styles.sortOptions}>
