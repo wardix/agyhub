@@ -24,6 +24,20 @@ conversations.post('/', authRequired, async (c) => {
       return c.json({ error: 'File and title are required', status: 400 }, 400)
     }
 
+    if (title.length > 200) {
+      return c.json(
+        { error: 'Title cannot exceed 200 characters', status: 400 },
+        400,
+      )
+    }
+
+    if (description.length > 1000) {
+      return c.json(
+        { error: 'Description cannot exceed 1000 characters', status: 400 },
+        400,
+      )
+    }
+
     if (file.size > 10 * 1024 * 1024) {
       return c.json({ error: 'File too large (max 10MB)', status: 400 }, 400)
     }
@@ -89,8 +103,11 @@ conversations.get('/', authOptional, async (c) => {
     const q = c.req.query('q') || ''
     const tag = c.req.query('tag') || ''
     const sort = c.req.query('sort') || 'recent'
-    const page = Number.parseInt(c.req.query('page') || '1', 10)
-    const limit = Number.parseInt(c.req.query('limit') || '10', 10)
+    const pageRaw = Number.parseInt(c.req.query('page') || '1', 10)
+    const page = Number.isNaN(pageRaw) || pageRaw < 1 ? 1 : pageRaw
+    const limitRaw = Number.parseInt(c.req.query('limit') || '10', 10)
+    const limit =
+      Number.isNaN(limitRaw) || limitRaw < 1 ? 10 : Math.min(limitRaw, 100)
     const offset = (page - 1) * limit
     const userId = c.get('userId')
 

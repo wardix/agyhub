@@ -94,7 +94,14 @@ auth.post('/register', registerLimiter, async (c) => {
 
 auth.post('/login', loginLimiter, async (c) => {
   try {
-    const { email, password } = await c.req.json()
+    const { email, password } = await c.req.json().catch(() => ({}))
+
+    if (!email || !password) {
+      return c.json(
+        { error: 'Email and password are required', status: 400 },
+        400,
+      )
+    }
 
     const [user] = await sql`
       SELECT * FROM users WHERE email = ${email}

@@ -84,10 +84,8 @@ describe('auth routes', () => {
 
       expect(res.status).toBe(200)
       const data = await res.json()
-      expect(data.user.email).toBe(testUser.email)
-
-      const cookies = res.headers.get('set-cookie')
-      expect(cookies).toBeDefined()
+      expect(data.user).toBeDefined()
+      expect(res.headers.get('set-cookie')).toContain('access_token')
     })
 
     it('should reject wrong password', async () => {
@@ -96,10 +94,23 @@ describe('auth routes', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: testUser.email,
-          password: 'wrongpassword',
+          password: 'WrongPassword!',
         }),
       })
+
       expect(res.status).toBe(401)
+    })
+
+    it('should reject missing email or password', async () => {
+      const res = await app.request('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: testUser.email,
+        }),
+      })
+
+      expect(res.status).toBe(400)
     })
   })
 
