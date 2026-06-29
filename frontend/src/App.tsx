@@ -13,6 +13,9 @@ import { HomePage, LoginPage, RegisterPage } from './pages'
 const ExplorePage = React.lazy(() =>
   import('./pages').then((module) => ({ default: module.ExplorePage })),
 )
+const FeedPage = React.lazy(() =>
+  import('./pages').then((module) => ({ default: module.FeedPage })),
+)
 const ConversationPage = React.lazy(() =>
   import('./pages').then((module) => ({ default: module.ConversationPage })),
 )
@@ -107,6 +110,16 @@ const AppRoutes = () => {
           />
 
           {/* Protected Routes */}
+          <Route
+            path="feed"
+            element={
+              <ProtectedRoute>
+                <ErrorBoundary>
+                  <FeedPage />
+                </ErrorBoundary>
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="upload"
             element={

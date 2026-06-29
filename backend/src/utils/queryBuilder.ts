@@ -9,6 +9,7 @@ export interface BuildQueryOptions {
   limit?: number
   offset?: number
   includeTranscript?: boolean
+  followedByUserId?: string
 }
 
 export function buildConversationQuery(opts: BuildQueryOptions) {
@@ -63,6 +64,11 @@ export function buildConversationQuery(opts: BuildQueryOptions) {
       JOIN tags t2 ON ct2.tag_id = t2.id 
       WHERE ct2.conversation_id = c.id AND t2.name = $${args.length}
     )`
+  }
+
+  if (opts.followedByUserId) {
+    args.push(opts.followedByUserId)
+    query += ` AND c.user_id IN (SELECT following_id FROM follows WHERE follower_id = $${args.length})`
   }
 
   if (opts.trending) {
