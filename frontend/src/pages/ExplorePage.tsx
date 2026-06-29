@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { ConversationCard } from '../components/ConversationCard/ConversationCard'
 import { SearchBar } from '../components/SearchBar/SearchBar'
+import { ConversationCardSkeleton } from '../components/Skeleton'
 import type { Conversation, PaginatedResponse, Tag } from '../types'
 import styles from './ExplorePage.module.css'
 
@@ -185,10 +186,12 @@ export const ExplorePage = () => {
 
           {/* Main Content */}
           <main className={styles.mainContent}>
-            {isLoading ? (
-              <div className={styles.loadingState}>
-                <div className={styles.spinner} />
-                <p>Searching...</p>
+            {isLoading && page === 1 ? (
+              <div className={styles.grid}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: Skeletons are static and order doesn't change
+                  <ConversationCardSkeleton key={`skeleton-${i}`} />
+                ))}
               </div>
             ) : conversations.length > 0 ? (
               <>
