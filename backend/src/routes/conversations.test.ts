@@ -143,6 +143,57 @@ describe('conversations routes', () => {
     expect(data.conversation.has_liked).toBe(false)
   })
 
+  it('should increment view count for a different IP', async () => {
+    if (!testUserId || !conversationId) return
+
+    const res1 = await app.request(`/api/conversations/${conversationId}`, {
+      headers: { 'x-forwarded-for': '10.0.0.1' },
+    })
+    const data1 = await res1.json()
+    const initialViews = data1.conversation.view_count
+
+    const res2 = await app.request(`/api/conversations/${conversationId}`, {
+      headers: { 'x-forwarded-for': '10.0.0.2' },
+    })
+    const data2 = await res2.json()
+    expect(data2.conversation.view_count).toBe(initialViews + 1)
+  })
+
+  it('should not increment view count twice for the same IP within window', async () => {
+    if (!testUserId || !conversationId) return
+
+    const res1 = await app.request(`/api/conversations/${conversationId}`, {
+      headers: { 'x-forwarded-for': '10.0.0.3' },
+    })
+    const data1 = await res1.json()
+    const initialViews = data1.conversation.view_count
+
+    const res2 = await app.request(`/api/conversations/${conversationId}`, {
+      headers: { 'x-forwarded-for': '10.0.0.3' },
+    })
+    const data2 = await res2.json()
+    expect(data2.conversation.view_count).toBe(initialViews)
+  })
+
+  it('should not increment view count for the author', async () => {
+    if (!testUserId || !conversationId) return
+
+    const res1 = await app.request(`/api/conversations/${conversationId}`, {
+      headers: { 'x-forwarded-for': '10.0.0.4' },
+    })
+    const data1 = await res1.json()
+    const initialViews = data1.conversation.view_count
+
+    const res2 = await app.request(`/api/conversations/${conversationId}`, {
+      headers: {
+        'x-forwarded-for': '10.0.0.5',
+        Cookie: `access_token=${authToken}`,
+      },
+    })
+    const data2 = await res2.json()
+    expect(data2.conversation.view_count).toBe(initialViews)
+  })
+
   it('should get a single conversation by ID with has_liked true when liked', async () => {
     if (!testUserId || !conversationId) return
 
