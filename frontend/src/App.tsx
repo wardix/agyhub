@@ -2,6 +2,7 @@ import React, { Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary'
 import { Layout } from './components/Layout/Layout'
+import { LoadingSpinner } from './components/LoadingSpinner'
 import { ToastContainer } from './components/ToastContainer/ToastContainer'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
@@ -34,7 +35,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <LoadingSpinner fullPage message="Loading..." />
   }
 
   if (!isAuthenticated) {
@@ -49,11 +50,11 @@ const AppRoutes = () => {
   const { isLoading } = useAuth()
 
   if (isLoading) {
-    return <div>Initializing...</div>
+    return <LoadingSpinner fullPage message="Initializing..." />
   }
 
   return (
-    <Suspense fallback={<div>Loading page...</div>}>
+    <Suspense fallback={<LoadingSpinner fullPage message="Loading page..." />}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route
