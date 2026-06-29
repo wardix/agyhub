@@ -106,4 +106,38 @@ describe('users routes', () => {
 
     expect(res.status).toBe(400)
   })
+
+  it('should return 401 for DELETE /api/users/me without token', async () => {
+    const res = await app.request('/api/users/me', {
+      method: 'DELETE',
+    })
+    expect(res.status).toBe(401)
+  })
+
+  it('should delete user and return 200', async () => {
+    // Create a new user just for deletion
+    const [userToDelete] = await sql`
+      INSERT INTO users (email, username) VALUES ('todelete@example.com', 'todelete') RETURNING id
+    `
+    const deleteToken = await signAccessToken(userToDelete.id)
+
+    // Add a conversation to ensure cascading deletion doesn't error
+    await sql`
+      INSERT INTO conversations (user_id, title, description, transcript)
+      VALUES (${userToDelete.id}, 'Delete Me', 'Desc', '[]')
+    `
+
+    const res = await app.request('/api/users/me', {
+      method: 'DELETE',
+      headers: {
+        Cookie: `access_token=${deleteToken}`,
+      },
+    })
+    expect(res.status).toBe(200)
+
+    // Verify user is gone
+    const checkUser =
+      await sql`SELECT id FROM users WHERE id = ${userToDelete.id}`
+    expect(checkUser.length).toBe(0)
+  })
 })
