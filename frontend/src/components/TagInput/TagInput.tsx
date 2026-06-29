@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../../api/client'
+import { useToast } from '../../hooks/useToast'
 import type { Tag } from '../../types'
 import { mapTag } from '../../utils/mappers'
 import styles from './TagInput.module.css'
@@ -16,6 +17,7 @@ export const TagInput = ({ value, onChange, maxTags = 5 }: TagInputProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const { showToast } = useToast()
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -37,7 +39,7 @@ export const TagInput = ({ value, onChange, maxTags = 5 }: TagInputProps) => {
         )
         setSuggestions(available)
       } catch (_err) {
-        // Handle silently or maybe with a toast in the future
+        showToast('Failed to load tag suggestions', 'error')
       } finally {
         setLoading(false)
       }
@@ -48,7 +50,7 @@ export const TagInput = ({ value, onChange, maxTags = 5 }: TagInputProps) => {
     }, 300)
 
     return () => clearTimeout(timeoutId)
-  }, [inputValue, value])
+  }, [inputValue, value, showToast])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

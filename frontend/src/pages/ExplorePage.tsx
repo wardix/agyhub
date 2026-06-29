@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import { ConversationCard } from '../components/ConversationCard/ConversationCard'
 import { SearchBar } from '../components/SearchBar/SearchBar'
 import { ConversationCardSkeleton } from '../components/Skeleton'
+import { useToast } from '../hooks/useToast'
 import type { Conversation, PaginatedResponse, Tag } from '../types'
 import { mapConversation, mapTag } from '../utils/mappers'
 import styles from './ExplorePage.module.css'
@@ -24,10 +25,13 @@ export const ExplorePage = () => {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [activeTag, setActiveTag] = useState(initialTag)
   const [activeSort, setActiveSort] = useState<SortOption>(initialSort)
   const [searchQuery, setSearchQuery] = useState(initialQuery)
+
+  const { showToast } = useToast()
 
   // Fetch initial tags
   useEffect(() => {
@@ -36,18 +40,22 @@ export const ExplorePage = () => {
         const data = await api.get<{ data: Tag[] }>('/tags')
         setTags(data.data.map(mapTag))
       } catch (_err) {
-        // Tag loading failure is not critical enough for a full error page
+        showToast('Failed to load tags', 'error')
       }
     }
     fetchTags()
-  }, [])
+  }, [showToast])
 
   // Fetch conversations based on filters
   const fetchConversations = useCallback(
     async (pageNum: number, reset = false) => {
       try {
-        if (reset) setIsLoading(true)
-        else setIsLoadingMore(true)
+        if (reset) {
+          setIsLoading(true)
+          setError(null)
+        } else {
+          setIsLoadingMore(true)
+        }
 
         let url = `/conversations?page=${pageNum}&limit=12&sort=${activeSort}`
         if (searchQuery) url += `&q=${encodeURIComponent(searchQuery)}`
@@ -60,14 +68,20 @@ export const ExplorePage = () => {
           reset ? mappedData : [...prev, ...mappedData],
         )
         setHasMore(pageNum < response.pagination.pages)
-      } catch (_err) {
-        // Conversation loading failure
+      } catch (err) {
+        if (reset) {
+          setError(
+            err instanceof Error ? err.message : 'Failed to load conversations',
+          )
+        } else {
+          showToast('Failed to load more conversations', 'error')
+        }
       } finally {
         setIsLoading(false)
         setIsLoadingMore(false)
       }
     },
-    [activeSort, searchQuery, activeTag],
+    [activeSort, searchQuery, activeTag, showToast],
   )
 
   // Trigger fetch when filters change
@@ -194,6 +208,21 @@ export const ExplorePage = () => {
                   // biome-ignore lint/suspicious/noArrayIndexKey: Skeletons are static and order doesn't change
                   <ConversationCardSkeleton key={`skeleton-${i}`} />
                 ))}
+              </div>
+            ) : error && page === 1 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>⚠️</div>
+                <h3 className={styles.emptyTitle}>
+                  Error loading conversations
+                </h3>
+                <p className={styles.emptyDesc}>{error}</p>
+                <button
+                  type="button"
+                  onClick={() => fetchConversations(1, true)}
+                  className={styles.retryBtn}
+                >
+                  Retry
+                </button>
               </div>
             ) : conversations.length > 0 ? (
               <>

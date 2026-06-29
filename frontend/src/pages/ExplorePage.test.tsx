@@ -12,6 +12,12 @@ vi.mock('../api/client', () => ({
   },
 }))
 
+vi.mock('../hooks/useToast', () => ({
+  useToast: () => ({
+    showToast: vi.fn(),
+  }),
+}))
+
 vi.mock('../hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }))

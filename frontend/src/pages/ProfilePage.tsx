@@ -10,6 +10,7 @@ import {
 } from '../components/Skeleton'
 import { UserCard } from '../components/UserCard/UserCard'
 import { useAuth } from '../hooks/useAuth'
+import { useToast } from '../hooks/useToast'
 import type {
   Conversation,
   PaginatedResponse,
@@ -28,6 +29,8 @@ export const ProfilePage = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [isLoadingProfile, setIsLoadingProfile] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [errorTab, setErrorTab] = useState<string | null>(null)
+  const { showToast } = useToast()
 
   const [activeTab, setActiveTab] = useState<Tab>('conversations')
 
@@ -78,6 +81,7 @@ export const ProfilePage = () => {
 
       try {
         setIsLoadingTab(true)
+        if (!isLoadMore) setErrorTab(null)
         let endpoint = ''
 
         if (activeTab === 'conversations') {
@@ -107,8 +111,14 @@ export const ProfilePage = () => {
           }
           setHasMore(pageNum < res.pagination.pages)
         }
-      } catch (_err) {
-        // Silent error for tab data, might add toast later
+      } catch (err) {
+        if (!isLoadMore) {
+          setErrorTab(
+            err instanceof Error ? err.message : 'Failed to load data',
+          )
+        } else {
+          showToast('Failed to load more data', 'error')
+        }
       } finally {
         setIsLoadingTab(false)
       }
@@ -116,7 +126,7 @@ export const ProfilePage = () => {
 
     fetchTabData(1, false)
     setPage(1)
-  }, [profile, username, activeTab])
+  }, [profile, username, activeTab, showToast])
 
   const handleLoadMore = () => {
     const nextPage = page + 1
@@ -144,6 +154,7 @@ export const ProfilePage = () => {
           setHasMore(nextPage < res.pagination.pages)
         }
       } catch (_err) {
+        showToast('Failed to load more data', 'error')
       } finally {
         setIsLoadingTab(false)
       }
@@ -286,7 +297,31 @@ export const ProfilePage = () => {
         </div>
 
         <div className={styles.tabContent}>
-          {activeTab === 'conversations' &&
+          {errorTab && !isLoadingTab ? (
+            <div className={styles.emptyState}>
+              <p>⚠️ {errorTab}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setPage(1)
+                  setErrorTab(null) /* Will trigger fetch again via effect */
+                }}
+                className={styles.retryBtn}
+                style={{
+                  marginTop: '1rem',
+                  padding: '0.5rem 1rem',
+                  background: 'var(--accent-primary)',
+                  color: 'white',
+                  borderRadius: 'var(--radius-md)',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Retry
+              </button>
+            </div>
+          ) : (
+            activeTab === 'conversations' &&
             (conversations.length === 0 && !isLoadingTab ? (
               <div className={styles.emptyState}>
                 No conversations shared yet.
@@ -297,7 +332,8 @@ export const ProfilePage = () => {
                   <ConversationCard key={conv.id} conversation={conv} />
                 ))}
               </div>
-            ))}
+            ))
+          )}
 
           {(activeTab === 'followers' || activeTab === 'following') &&
             (usersList.length === 0 && !isLoadingTab ? (
