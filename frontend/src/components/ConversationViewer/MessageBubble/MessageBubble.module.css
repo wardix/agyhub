@@ -132,3 +132,21 @@
 .link:hover {
   text-decoration: none;
 }
+
+@media (max-width: 600px) {
+  .bubble {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .container {
+    gap: 0.5rem;
+  }
+
+  .userIcon,
+  .aiIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+}
