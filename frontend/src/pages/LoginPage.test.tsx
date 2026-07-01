@@ -71,9 +71,7 @@ describe('LoginPage', () => {
 
   it('renders login form', () => {
     renderWithContext()
-    expect(
-      screen.getByRole('heading', { name: /ConvHub/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /AGYHub/i })).toBeInTheDocument()
     expect(screen.getByLabelText(/Email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/^Password$/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Log in/i })).toBeInTheDocument()

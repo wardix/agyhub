@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: convhub
+      POSTGRES_DB: agyhub
     ports:
       - "5432:5432"
     volumes:
@@ -24,7 +24,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgres://postgres:password@db:5432/convhub
+      - DATABASE_URL=postgres://postgres:password@db:5432/agyhub
     volumes:
       - ./backend:/app
       - /app/node_modules

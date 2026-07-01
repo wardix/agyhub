@@ -4,7 +4,7 @@ const poolSize = Number.parseInt(process.env.DB_POOL_SIZE || '10', 10)
 
 const sql = new SQL(
   process.env.DATABASE_URL ||
-    'postgres://postgres:postgres@localhost:5432/convhub',
+    'postgres://postgres:postgres@localhost:5432/agyhub',
   { max: poolSize },
 )
 

@@ -1,9 +1,9 @@
-# ConvHub
+# AGYHub
 
-[![CI/CD Pipeline](https://github.com/wardix/convhub/actions/workflows/ci.yml/badge.svg)](https://github.com/wardix/convhub/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/wardix/agyhub/actions/workflows/ci.yml/badge.svg)](https://github.com/wardix/agyhub/actions/workflows/ci.yml)
 **A community platform for sharing Antigravity conversation experiences.**
 
-ConvHub lets users upload their [Antigravity](https://deepmind.google/) conversation transcripts (JSONL files) and share them with the community. Browse, search, like, comment, and discover how others use AI coding assistants.
+AGYHub lets users upload their [Antigravity](https://deepmind.google/) conversation transcripts (JSONL files) and share them with the community. Browse, search, like, comment, and discover how others use AI coding assistants.
 
 ## ✨ Features
 
@@ -44,8 +44,8 @@ ConvHub lets users upload their [Antigravity](https://deepmind.google/) conversa
 
 ```bash
 # Clone the repo
-git clone https://github.com/wardix/convhub.git
-cd convhub
+git clone https://github.com/wardix/agyhub.git
+cd agyhub
 
 # Start the entire stack with Docker Compose
 docker compose up
@@ -57,8 +57,8 @@ Visit `http://localhost:5173` to see the app. Hot reload is enabled for both fro
 
 ```bash
 # Clone the repo
-git clone https://github.com/wardix/convhub.git
-cd convhub
+git clone https://github.com/wardix/agyhub.git
+cd agyhub
 
 # Set up the backend
 cd backend
@@ -78,7 +78,7 @@ Visit `http://localhost:5173` to see the app. The frontend dev server is configu
 ## 📁 Project Structure
 
 ```
-convhub/
+agyhub/
 ├── frontend/           # React + Vite SPA
 │   └── src/
 │       ├── api/        # API client
@@ -105,4 +105,4 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instr
 
 ## 📄 License
 
-[MIT](LICENSE) © ConvHub Contributors
+[MIT](LICENSE) © AGYHub Contributors

@@ -14,7 +14,7 @@ vi.mock('./api/client', () => ({
 describe('App', () => {
   it('renders without crashing', async () => {
     render(<App />)
-    const logoText = await screen.findByText('ConvHub')
+    const logoText = await screen.findByText('AGYHub')
     expect(logoText).toBeInTheDocument()
   })
 })

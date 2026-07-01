@@ -1,6 +1,6 @@
-# Contributing to ConvHub
+# Contributing to AGYHub
 
-Thank you for your interest in contributing to ConvHub! This guide will help you get started.
+Thank you for your interest in contributing to AGYHub! This guide will help you get started.
 
 ## Prerequisites
 
@@ -14,8 +14,8 @@ Thank you for your interest in contributing to ConvHub! This guide will help you
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/wardix/convhub.git
-cd convhub
+git clone https://github.com/wardix/agyhub.git
+cd agyhub
 ```
 
 ### 2. Set up PostgreSQL
@@ -23,7 +23,7 @@ cd convhub
 Create the database:
 
 ```bash
-createdb convhub_dev
+createdb agyhub_dev
 ```
 
 ### 3. Set up the backend
@@ -38,7 +38,7 @@ bun run dev                  # Start the API server (default: http://localhost:3
 
 Required environment variables in `backend/.env`:
 ```
-DATABASE_URL=postgres://localhost:5432/convhub_dev
+DATABASE_URL=postgres://localhost:5432/agyhub_dev
 JWT_SECRET=your-secret-key-change-in-production
 JWT_REFRESH_SECRET=your-refresh-secret-change-in-production
 GOOGLE_CLIENT_ID=your-google-oauth-client-id
@@ -124,10 +124,10 @@ bun test src/routes/        # Run tests in a specific directory
 For integration tests that require a database, set up a test database:
 
 ```bash
-createdb convhub_test
+createdb agyhub_test
 ```
 
-Set `DATABASE_URL` in your test environment to point to `convhub_test`.
+Set `DATABASE_URL` in your test environment to point to `agyhub_test`.
 
 #### Frontend (Vitest)
 

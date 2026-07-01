@@ -66,10 +66,10 @@ export const FeedPage = () => {
   return (
     <>
       <Helmet>
-        <title>Your Feed — ConvHub</title>
+        <title>Your Feed — AGYHub</title>
         <meta
           name="description"
-          content="Latest conversations from users you follow on ConvHub."
+          content="Latest conversations from users you follow on AGYHub."
         />
       </Helmet>
       <div className={styles.container}>

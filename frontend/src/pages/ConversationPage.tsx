@@ -154,13 +154,13 @@ export const ConversationPage = () => {
     <>
       <Helmet>
         <title>
-          {conversation.title} by {conversation.author.username} — ConvHub
+          {conversation.title} by {conversation.author.username} — AGYHub
         </title>
         <meta
           name="description"
           content={
             conversation.description ||
-            `Read this AI conversation by ${conversation.author.username} on ConvHub.`
+            `Read this AI conversation by ${conversation.author.username} on AGYHub.`
           }
         />
       </Helmet>

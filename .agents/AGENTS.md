@@ -1,8 +1,8 @@
-# ConvHub — Agent & Contributor Rules
+# AGYHub — Agent & Contributor Rules
 
 ## Project Overview
 
-**ConvHub** is a community platform where users share their Antigravity (AI coding assistant) conversation experiences by uploading JSONL transcript files. Think of it as "GitHub Gists for AI conversations" with full social features.
+**AGYHub** is a community platform where users share their Antigravity (AI coding assistant) conversation experiences by uploading JSONL transcript files. Think of it as "GitHub Gists for AI conversations" with full social features.
 
 ## Tech Stack
 
@@ -19,7 +19,7 @@
 ## Project Structure
 
 ```
-convhub/
+agyhub/
 ├── frontend/          # React + Vite SPA
 │   └── src/
 │       ├── api/       # API client (all backend calls go through here)
@@ -274,8 +274,8 @@ If Biome finds unfixable errors (e.g., `noExplicitAny`), the commit is **blocked
 After cloning the repo, run `bun install` at the root to set up Husky hooks:
 
 ```bash
-git clone https://github.com/wardix/convhub.git
-cd convhub
+git clone https://github.com/wardix/agyhub.git
+cd agyhub
 bun install          # Installs deps + sets up Husky hooks via "prepare" script
 ```
 

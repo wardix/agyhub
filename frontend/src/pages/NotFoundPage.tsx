@@ -6,7 +6,7 @@ export const NotFoundPage = () => {
   return (
     <>
       <Helmet>
-        <title>Page Not Found — ConvHub</title>
+        <title>Page Not Found — AGYHub</title>
       </Helmet>
       <div className={styles.container}>
         <h1 className={styles.title}>404</h1>

@@ -77,10 +77,10 @@ export const SettingsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Settings — ConvHub</title>
+        <title>Settings — AGYHub</title>
         <meta
           name="description"
-          content="Manage your ConvHub account settings."
+          content="Manage your AGYHub account settings."
         />
       </Helmet>
       <div className={styles.container}>

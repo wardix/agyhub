@@ -105,13 +105,13 @@ export const RegisterPage = () => {
   return (
     <>
       <Helmet>
-        <title>Sign Up — ConvHub</title>
-        <meta name="description" content="Create a new ConvHub account." />
+        <title>Sign Up — AGYHub</title>
+        <meta name="description" content="Create a new AGYHub account." />
       </Helmet>
       <div className={styles.authContainer}>
         <div className={styles.authCard}>
           <div className={styles.header}>
-            <h1 className={styles.logo}>ConvHub</h1>
+            <h1 className={styles.logo}>AGYHub</h1>
             <p className={styles.tagline}>
               Create an account to join the community.
             </p>

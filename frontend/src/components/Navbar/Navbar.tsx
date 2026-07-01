@@ -72,7 +72,7 @@ export const Navbar = () => {
       <div className={styles.container} ref={menuRef}>
         <div className={styles.logoWrapper}>
           <div className={styles.logo}>
-            <Link to="/">ConvHub</Link>
+            <Link to="/">AGYHub</Link>
           </div>
           <button
             type="button"

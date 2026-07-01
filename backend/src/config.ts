@@ -20,6 +20,6 @@ export const config = {
   PORT: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
   DATABASE_URL: getEnv(
     'DATABASE_URL',
-    'postgresql://postgres:postgres@localhost:5432/convhub',
+    'postgresql://postgres:postgres@localhost:5432/agyhub',
   ),
 }

@@ -197,10 +197,10 @@ export const ProfilePage = () => {
   return (
     <>
       <Helmet>
-        <title>@{profile.username} — ConvHub</title>
+        <title>@{profile.username} — AGYHub</title>
         <meta
           name="description"
-          content={`View the profile and conversations of ${profile.username} on ConvHub.`}
+          content={`View the profile and conversations of ${profile.username} on AGYHub.`}
         />
       </Helmet>
       <div className={styles.container}>

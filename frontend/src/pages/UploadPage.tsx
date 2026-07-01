@@ -22,10 +22,10 @@ export const UploadPage = () => {
   return (
     <>
       <Helmet>
-        <title>Upload Conversation — ConvHub</title>
+        <title>Upload Conversation — AGYHub</title>
         <meta
           name="description"
-          content="Upload a new AI conversation to ConvHub."
+          content="Upload a new AI conversation to AGYHub."
         />
       </Helmet>
       <div className={styles.container}>

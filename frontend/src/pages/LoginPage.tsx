@@ -81,13 +81,13 @@ export const LoginPage = () => {
   return (
     <>
       <Helmet>
-        <title>Login — ConvHub</title>
-        <meta name="description" content="Log in to your ConvHub account." />
+        <title>Login — AGYHub</title>
+        <meta name="description" content="Log in to your AGYHub account." />
       </Helmet>
       <div className={styles.authContainer}>
         <div className={styles.authCard}>
           <div className={styles.header}>
-            <h1 className={styles.logo}>ConvHub</h1>
+            <h1 className={styles.logo}>AGYHub</h1>
             <p className={styles.tagline}>
               Welcome back! Please enter your details.
             </p>

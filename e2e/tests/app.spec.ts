@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/test'
 const generateRandomString = () => Math.random().toString(36).substring(2, 8)
 
 test.describe
-  .serial('ConvHub E2E flows', () => {
+  .serial('AGYHub E2E flows', () => {
     let uniqueId: string
     let testEmail: string
     let testUsername: string

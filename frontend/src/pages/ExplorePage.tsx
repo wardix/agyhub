@@ -111,10 +111,10 @@ export const ExplorePage = () => {
   return (
     <>
       <Helmet>
-        <title>Explore AI Conversations — ConvHub</title>
+        <title>Explore AI Conversations — AGYHub</title>
         <meta
           name="description"
-          content="Browse and search for the best AI conversations on ConvHub."
+          content="Browse and search for the best AI conversations on AGYHub."
         />
       </Helmet>
       <div className={styles.container}>

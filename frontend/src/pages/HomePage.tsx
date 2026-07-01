@@ -50,7 +50,7 @@ export const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>ConvHub — Share Your AI Conversations</title>
+        <title>AGYHub — Share Your AI Conversations</title>
         <meta
           name="description"
           content="Discover and share the best AI conversations from Antigravity and other assistants."
@@ -64,9 +64,8 @@ export const HomePage = () => {
               Share Your AI Conversations with the World
             </h1>
             <p className={styles.heroSubtitle}>
-              ConvHub is the place to discover, share, and discuss fascinating
-              AI interactions. Think of it as "GitHub Gists for AI
-              conversations".
+              AGYHub is the place to discover, share, and discuss fascinating AI
+              interactions. Think of it as "GitHub Gists for AI conversations".
             </p>
             <div className={styles.heroActions}>
               <Link to="/upload" className={styles.primaryBtn}>
