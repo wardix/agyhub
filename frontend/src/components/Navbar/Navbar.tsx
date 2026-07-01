@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAppConfig } from '../../context/AppConfigContext'
 import { useAuth } from '../../hooks/useAuth'
 import { ThemeToggle } from '../ThemeToggle/ThemeToggle'
 import styles from './Navbar.module.css'
 
 export const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth()
+  const { config } = useAppConfig()
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -149,9 +151,11 @@ export const Navbar = () => {
                   <Link to="/login" className={styles.loginBtn}>
                     Log in
                   </Link>
-                  <Link to="/register" className={styles.registerBtn}>
-                    Sign up
-                  </Link>
+                  {config.signupEnabled && (
+                    <Link to="/register" className={styles.registerBtn}>
+                      Sign up
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
