@@ -39,6 +39,12 @@ conversations.post('/', authRequired, async (c) => {
     const title = body.title as string
     const description = (body.description as string) || ''
     const tagsStr = (body.tags as string) || ''
+    let visibility =
+      (body.visibility as string) || process.env.DEFAULT_VISIBILITY || 'public'
+
+    if (!['public', 'unlisted', 'private'].includes(visibility)) {
+      visibility = 'public'
+    }
 
     if (!file || !title) {
       return c.json({ error: 'File and title are required', status: 400 }, 400)
@@ -79,9 +85,9 @@ conversations.post('/', authRequired, async (c) => {
 
     // Insert conversation
     const [conversation] = await sql`
-      INSERT INTO conversations (user_id, title, description, transcript, message_count)
-      VALUES (${userId}, ${title}, ${description}, ${JSON.stringify(entries)}, ${messageCount})
-      RETURNING id, user_id, title, description, message_count, like_count, comment_count, view_count, created_at
+      INSERT INTO conversations (user_id, title, description, transcript, message_count, visibility)
+      VALUES (${userId}, ${title}, ${description}, ${JSON.stringify(entries)}, ${messageCount}, ${visibility})
+      RETURNING id, user_id, title, description, message_count, like_count, comment_count, view_count, created_at, visibility
     `
 
     // Process tags
@@ -212,6 +218,10 @@ conversations.get('/:id', authOptional, async (c) => {
     const lastViewed = viewDebounceMap.get(viewKey)
     const isAuthor = rows[0].user_id === userId
 
+    if (rows[0].visibility === 'private' && !isAuthor) {
+      return c.json({ error: 'Conversation not found', status: 404 }, 404)
+    }
+
     if (!isAuthor && (!lastViewed || now - lastViewed > VIEW_DEBOUNCE_MS)) {
       viewDebounceMap.set(viewKey, now)
       // Increment view count
@@ -230,7 +240,7 @@ conversations.put('/:id', authRequired, async (c) => {
     const id = c.req.param('id')
     const userId = c.get('userId')
     const body = await c.req.json()
-    const { title, description, tags } = body
+    const { title, description, tags, visibility } = body
 
     const [conversation] =
       await sql`SELECT user_id FROM conversations WHERE id = ${id}`
@@ -257,11 +267,19 @@ conversations.put('/:id', authRequired, async (c) => {
       )
     }
 
+    if (
+      visibility !== undefined &&
+      !['public', 'unlisted', 'private'].includes(visibility)
+    ) {
+      return c.json({ error: 'Invalid visibility', status: 400 }, 400)
+    }
+
     // Initialize update set with COALESCE to fallback to current values
     await sql`
       UPDATE conversations
       SET title = COALESCE(${title !== undefined ? title : null}, title),
-          description = COALESCE(${description !== undefined ? description : null}, description)
+          description = COALESCE(${description !== undefined ? description : null}, description),
+          visibility = COALESCE(${visibility !== undefined ? visibility : null}, visibility)
       WHERE id = ${id}
     `
 

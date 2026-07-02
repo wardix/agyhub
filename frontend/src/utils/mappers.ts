@@ -55,6 +55,7 @@ export function mapConversation(raw: any): Conversation {
     viewCount: raw.view_count || 0,
     hasLiked: Boolean(raw.has_liked),
     createdAt: raw.created_at,
+    visibility: raw.visibility || 'public',
   }
 }
 

@@ -27,6 +27,7 @@ export interface Conversation {
   viewCount: number
   hasLiked: boolean
   createdAt: string
+  visibility: 'public' | 'unlisted' | 'private'
 }
 
 export interface ConversationDetail extends Conversation {

@@ -29,6 +29,16 @@ export const ConversationCard = React.memo(
               </span>
             </div>
           </div>
+          {conversation.visibility && conversation.visibility !== 'public' && (
+            <span
+              className={styles.visibilityBadge}
+              title={
+                conversation.visibility === 'private' ? 'Private' : 'Unlisted'
+              }
+            >
+              {conversation.visibility === 'private' ? '🔒' : '🔗'}
+            </span>
+          )}
         </div>
 
         <div className={styles.content}>

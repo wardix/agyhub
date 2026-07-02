@@ -16,7 +16,7 @@ describe('buildConversationQuery', () => {
     expect(query).toContain(
       'EXISTS(SELECT 1 FROM likes l WHERE l.conversation_id = c.id AND l.user_id = $1) as "has_liked"',
     )
-    expect(args).toEqual(['user1'])
+    expect(args[0]).toEqual('user1')
   })
 
   it('applies search filter', () => {

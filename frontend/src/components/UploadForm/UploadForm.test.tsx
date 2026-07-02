@@ -25,6 +25,7 @@ vi.mock('../../api/client', async () => {
     ...actual,
     api: {
       post: vi.fn(),
+      get: vi.fn().mockResolvedValue({ defaultVisibility: 'public' }),
     },
   }
 })

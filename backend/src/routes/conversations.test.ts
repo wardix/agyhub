@@ -289,4 +289,102 @@ describe('conversations routes', () => {
     })
     expect(res.status).toBe(204)
   })
+
+  describe('visibility controls', () => {
+    let publicId = ''
+    let unlistedId = ''
+    let privateId = ''
+
+    it('should upload conversations with different visibilities', async () => {
+      const upload = async (visibility: string) => {
+        const formData = new FormData()
+        formData.append('title', `Test ${visibility}`)
+        formData.append('visibility', visibility)
+        formData.append(
+          'file',
+          new File(
+            [
+              '{"step_index":0,"type":"USER_INPUT","source":"USER_EXPLICIT","status":"DONE","created_at":"2023-01-01"}',
+            ],
+            'transcript.jsonl',
+            { type: 'application/json' },
+          ),
+        )
+        const res = await app.request('/api/conversations', {
+          method: 'POST',
+          headers: { Cookie: `access_token=${authToken}` },
+          body: formData,
+        })
+        const data = await res.json()
+        return data.conversation.id
+      }
+
+      publicId = await upload('public')
+      unlistedId = await upload('unlisted')
+      privateId = await upload('private')
+
+      expect(publicId).toBeDefined()
+      expect(unlistedId).toBeDefined()
+      expect(privateId).toBeDefined()
+    })
+
+    it('should filter out unlisted and private from lists for visitors', async () => {
+      const res = await app.request('/api/conversations')
+      const data = await res.json()
+      const ids = data.data.map((c: any) => c.id)
+
+      expect(ids).toContain(publicId)
+      expect(ids).not.toContain(unlistedId)
+      expect(ids).not.toContain(privateId)
+    })
+
+    it('should show all to author', async () => {
+      // For lists where currentUserId is not authorId, but we are querying generally
+      const res = await app.request('/api/conversations', {
+        headers: { Cookie: `access_token=${authToken}` },
+      })
+      const data = await res.json()
+      const ids = data.data.map((c: any) => c.id)
+
+      expect(ids).toContain(publicId)
+      expect(ids).toContain(unlistedId)
+      expect(ids).toContain(privateId)
+    })
+
+    it('should allow visitor direct access to unlisted but not private', async () => {
+      const resUnlisted = await app.request(
+        `/api/conversations/${unlistedId}`,
+        {
+          headers: { Cookie: `access_token=${otherAuthToken}` },
+        },
+      )
+      expect(resUnlisted.status).toBe(200)
+
+      const resPrivate = await app.request(`/api/conversations/${privateId}`, {
+        headers: { Cookie: `access_token=${otherAuthToken}` },
+      })
+      expect(resPrivate.status).toBe(404)
+    })
+
+    it('should allow author direct access to private', async () => {
+      const res = await app.request(`/api/conversations/${privateId}`, {
+        headers: { Cookie: `access_token=${authToken}` },
+      })
+      expect(res.status).toBe(200)
+    })
+
+    it('should allow changing visibility', async () => {
+      const res = await app.request(`/api/conversations/${publicId}`, {
+        method: 'PUT',
+        headers: {
+          Cookie: `access_token=${authToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ visibility: 'private' }),
+      })
+      expect(res.status).toBe(200)
+      const data = await res.json()
+      expect(data.conversation.visibility).toBe('private')
+    })
+  })
 })
