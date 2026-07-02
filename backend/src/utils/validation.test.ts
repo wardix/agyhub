@@ -31,12 +31,17 @@ describe('validation utils', () => {
     it('should validate alphanumeric usernames between 3 and 50 chars', () => {
       expect(validateUsername('user_name123').valid).toBe(true)
       expect(validateUsername('abc').valid).toBe(true)
+      expect(validateUsername('anton.purba').valid).toBe(true)
+      expect(validateUsername('user.name_123').valid).toBe(true)
     })
 
     it('should reject invalid usernames', () => {
       expect(validateUsername('ab').valid).toBe(false)
       expect(validateUsername('user name').valid).toBe(false)
       expect(validateUsername('user-name').valid).toBe(false)
+      expect(validateUsername('.dotstart').valid).toBe(false)
+      expect(validateUsername('dotend.').valid).toBe(false)
+      expect(validateUsername('double..dot').valid).toBe(false)
     })
   })
 })

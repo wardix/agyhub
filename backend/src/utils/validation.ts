@@ -20,12 +20,24 @@ export function validateUsername(username: string): {
   valid: boolean
   message?: string
 } {
-  const usernameRegex = /^[a-zA-Z0-9_]{3,50}$/
+  const usernameRegex = /^[a-zA-Z0-9_](?:[a-zA-Z0-9_.]*[a-zA-Z0-9_])?$/
+  if (!username || username.length < 3 || username.length > 50) {
+    return {
+      valid: false,
+      message: 'Username must be 3-50 characters long',
+    }
+  }
   if (!usernameRegex.test(username)) {
     return {
       valid: false,
       message:
-        'Username must be 3-50 characters long and contain only letters, numbers, and underscores',
+        'Username can only contain letters, numbers, underscores, and dots (cannot start/end with a dot)',
+    }
+  }
+  if (username.includes('..')) {
+    return {
+      valid: false,
+      message: 'Username cannot contain consecutive dots',
     }
   }
   return { valid: true }
