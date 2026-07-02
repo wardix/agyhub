@@ -29,6 +29,9 @@ export const ConversationPage = () => {
   const [editTitle, setEditTitle] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [editTags, setEditTags] = useState('')
+  const [editVisibility, setEditVisibility] = useState<
+    'public' | 'unlisted' | 'private'
+  >('public')
   const [isSaving, setIsSaving] = useState(false)
   useEffect(() => {
     const fetchConversation = async () => {
@@ -96,6 +99,7 @@ export const ConversationPage = () => {
       setEditTitle(conversation.title)
       setEditDescription(conversation.description || '')
       setEditTags(conversation.tags?.map((t) => t.name).join(', ') || '')
+      setEditVisibility(conversation.visibility || 'public')
       setIsEditing(true)
     }
   }
@@ -109,6 +113,7 @@ export const ConversationPage = () => {
           title: editTitle,
           description: editDescription,
           tags: editTags,
+          visibility: editVisibility,
         },
       )
       setConversation(mapConversationDetail(res.conversation))
@@ -191,6 +196,19 @@ export const ConversationPage = () => {
                 className={styles.editInput}
                 placeholder="Tags (comma separated)"
               />
+              <select
+                value={editVisibility}
+                onChange={(e) =>
+                  setEditVisibility(
+                    e.target.value as 'public' | 'unlisted' | 'private',
+                  )
+                }
+                className={styles.editInput}
+              >
+                <option value="public">Public</option>
+                <option value="unlisted">Unlisted</option>
+                <option value="private">Private</option>
+              </select>
               <div className={styles.editActions}>
                 <button
                   type="button"
@@ -212,7 +230,23 @@ export const ConversationPage = () => {
             </div>
           ) : (
             <>
-              <h1 className={styles.title}>{conversation.title}</h1>
+              <div className={styles.titleWrapper}>
+                <h1 className={styles.title}>{conversation.title}</h1>
+                {isAuthor && conversation.visibility !== 'public' && (
+                  <span
+                    className={styles.visibilityBadge}
+                    title={
+                      conversation.visibility === 'private'
+                        ? 'Only you can see this'
+                        : 'Only people with the link can see this'
+                    }
+                  >
+                    {conversation.visibility === 'private'
+                      ? '🔒 Private'
+                      : '🔗 Unlisted'}
+                  </span>
+                )}
+              </div>
 
               <div className={styles.meta}>
                 <div className={styles.author}>

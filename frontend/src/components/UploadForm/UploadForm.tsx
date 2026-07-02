@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError, api } from '../../api/client'
 import { useToast } from '../../hooks/useToast'
@@ -25,6 +25,25 @@ export const UploadForm = () => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [tags, setTags] = useState<Tag[]>([])
+  const [visibility, setVisibility] = useState<
+    'public' | 'unlisted' | 'private'
+  >('public')
+
+  useEffect(() => {
+    api
+      .get<{ defaultVisibility?: string }>('/config')
+      .then((res) => {
+        if (
+          res.defaultVisibility &&
+          ['public', 'unlisted', 'private'].includes(res.defaultVisibility)
+        ) {
+          setVisibility(
+            res.defaultVisibility as 'public' | 'unlisted' | 'private',
+          )
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   // UI state
   const [isDragging, setIsDragging] = useState(false)
@@ -135,6 +154,7 @@ export const UploadForm = () => {
       if (tags.length > 0) {
         formData.append('tags', tags.map((t) => t.name).join(','))
       }
+      formData.append('visibility', visibility)
 
       const response = await api.post<{ conversation: { id: string } }>(
         '/conversations',
@@ -306,6 +326,27 @@ export const UploadForm = () => {
             <div className={styles.formGroup}>
               <span>Tags</span>
               <TagInput value={tags} onChange={setTags} maxTags={5} />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="visibility">Visibility</label>
+              <select
+                id="visibility"
+                value={visibility}
+                onChange={(e) =>
+                  setVisibility(
+                    e.target.value as 'public' | 'unlisted' | 'private',
+                  )
+                }
+                className={styles.input}
+                disabled={isSubmitting}
+              >
+                <option value="public">Public — Listed everywhere</option>
+                <option value="unlisted">
+                  Unlisted — Only via direct link
+                </option>
+                <option value="private">Private — Only you can see</option>
+              </select>
             </div>
 
             <div className={styles.previewSection}>

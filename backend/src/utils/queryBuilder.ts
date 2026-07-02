@@ -17,7 +17,7 @@ export function buildConversationQuery(opts: BuildQueryOptions) {
 
   let query = `
     SELECT c.id, c.title, c.description, c.message_count, c.like_count, 
-           c.comment_count, c.view_count, c.created_at, c.user_id`
+           c.comment_count, c.view_count, c.created_at, c.user_id, c.visibility`
 
   if (opts.includeTranscript) {
     query += ', c.transcript'
@@ -41,6 +41,21 @@ export function buildConversationQuery(opts: BuildQueryOptions) {
     LEFT JOIN tags tg ON ct.tag_id = tg.id
     WHERE 1=1
   `
+
+  if (!opts.id) {
+    if (
+      opts.authorId &&
+      opts.currentUserId &&
+      opts.authorId === opts.currentUserId
+    ) {
+      // author looking at their own profile: no visibility filter
+    } else if (opts.currentUserId) {
+      args.push(opts.currentUserId)
+      query += ` AND (c.visibility = 'public' OR c.user_id = $${args.length})`
+    } else {
+      query += ` AND c.visibility = 'public'`
+    }
+  }
 
   if (opts.id) {
     args.push(opts.id)

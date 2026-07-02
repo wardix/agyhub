@@ -42,6 +42,7 @@ app.get('/api/config', (c) => {
   return c.json({
     signupEnabled: process.env.DISABLE_SIGNUP !== 'true',
     googleAuthEnabled: Boolean(process.env.GOOGLE_CLIENT_ID),
+    defaultVisibility: process.env.DEFAULT_VISIBILITY || 'public',
   })
 })
 
