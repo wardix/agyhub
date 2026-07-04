@@ -8,7 +8,7 @@ import { LikeButton } from '../components/LikeButton/LikeButton'
 import { TranscriptSkeleton } from '../components/Skeleton'
 import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../hooks/useToast'
-import type { ConversationDetail } from '../types'
+import type { ConversationDetail, TranscriptEntry } from '../types'
 import { mapConversationDetail } from '../utils/mappers'
 import styles from './ConversationPage.module.css'
 
@@ -24,6 +24,7 @@ export const ConversationPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isSyncing, setIsSyncing] = useState(false)
 
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState('')
@@ -92,6 +93,53 @@ export const ConversationPage = () => {
       showToast('Failed to delete conversation', 'error')
       setIsDeleting(false)
     }
+  }
+
+  const handleSync = async (file: File) => {
+    try {
+      setIsSyncing(true)
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const res = await api.post<{
+        conversation: Record<string, unknown>
+        sync: {
+          existingEntries: number
+          newEntries: number
+          totalEntries: number
+        }
+      }>(`/conversations/${id}/transcript`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+
+      const updated = res.conversation
+      setConversation((prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          transcript: updated.transcript as TranscriptEntry[],
+          messageCount: updated.message_count as number,
+        }
+      })
+      showToast(
+        `Added ${res.sync.newEntries} new entries (${res.sync.existingEntries} → ${res.sync.totalEntries})`,
+        'success',
+      )
+    } catch (err) {
+      showToast(
+        err instanceof Error ? err.message : 'Failed to sync transcript',
+        'error',
+      )
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      handleSync(e.target.files[0])
+    }
+    e.target.value = '' // Reset input
   }
 
   const handleEdit = () => {
@@ -335,6 +383,20 @@ export const ConversationPage = () => {
 
                 {isAuthor && (
                   <>
+                    <input
+                      type="file"
+                      id="sync-file-upload"
+                      className={styles.hiddenInput}
+                      accept=".jsonl"
+                      onChange={handleFileSelect}
+                      disabled={isSyncing}
+                    />
+                    <label
+                      htmlFor="sync-file-upload"
+                      className={`${styles.actionBtn} ${isSyncing ? styles.disabled : ''}`}
+                    >
+                      {isSyncing ? 'Syncing...' : '🔄 Sync Transcript'}
+                    </label>
                     <button
                       type="button"
                       className={styles.actionBtn}

@@ -387,4 +387,98 @@ describe('conversations routes', () => {
       expect(data.conversation.visibility).toBe('private')
     })
   })
+
+  describe('PATCH /api/conversations/:id/transcript', () => {
+    let syncId = ''
+
+    beforeAll(async () => {
+      const formData = new FormData()
+      formData.append('title', 'Sync Test')
+      formData.append(
+        'file',
+        new File(
+          [
+            '{"step_index":0,"type":"USER_INPUT","content":"hello"}\n{"step_index":1,"type":"PLANNER_RESPONSE","content":"hi"}',
+          ],
+          'transcript.jsonl',
+          { type: 'application/json' },
+        ),
+      )
+      const res = await app.request('/api/conversations', {
+        method: 'POST',
+        headers: { Cookie: `access_token=${authToken}` },
+        body: formData,
+      })
+      const data = await res.json()
+      syncId = data.conversation.id
+    })
+
+    it('should append new entries by step_index', async () => {
+      const formData = new FormData()
+      // Includes step 0 (duplicate), step 1 (duplicate), and step 2 (new)
+      formData.append(
+        'file',
+        new File(
+          [
+            '{"step_index":0,"type":"USER_INPUT","content":"hello"}\n{"step_index":1,"type":"PLANNER_RESPONSE","content":"hi"}\n{"step_index":2,"type":"USER_INPUT","content":"new message"}',
+          ],
+          'transcript.jsonl',
+          { type: 'application/json' },
+        ),
+      )
+
+      const res = await app.request(`/api/conversations/${syncId}/transcript`, {
+        method: 'PATCH',
+        headers: { Cookie: `access_token=${authToken}` },
+        body: formData,
+      })
+
+      expect(res.status).toBe(200)
+      const data = await res.json()
+      expect(data.sync.existingEntries).toBe(2)
+      expect(data.sync.newEntries).toBe(1)
+      expect(data.sync.totalEntries).toBe(3)
+      expect(data.conversation.message_count).toBe(3)
+    })
+
+    it('should return 400 if no new entries found', async () => {
+      const formData = new FormData()
+      formData.append(
+        'file',
+        new File(
+          ['{"step_index":0,"type":"USER_INPUT","content":"hello"}'],
+          'transcript.jsonl',
+          { type: 'application/json' },
+        ),
+      )
+
+      const res = await app.request(`/api/conversations/${syncId}/transcript`, {
+        method: 'PATCH',
+        headers: { Cookie: `access_token=${authToken}` },
+        body: formData,
+      })
+
+      expect(res.status).toBe(400)
+      const data = await res.json()
+      expect(data.error).toBe('No new entries found to append')
+    })
+
+    it('should reject non-authors', async () => {
+      const formData = new FormData()
+      formData.append(
+        'file',
+        new File(['{"step_index":3,"type":"USER_INPUT"}'], 'transcript.jsonl', {
+          type: 'application/json',
+        }),
+      )
+
+      const res = await app.request(`/api/conversations/${syncId}/transcript`, {
+        method: 'PATCH',
+        headers: { Cookie: `access_token=${otherAuthToken}` },
+        body: formData,
+      })
+
+      expect(res.status).toBe(403)
+    })
+  })
 })
