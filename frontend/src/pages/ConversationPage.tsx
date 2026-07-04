@@ -107,7 +107,7 @@ export const ConversationPage = () => {
   const handleSave = async () => {
     try {
       setIsSaving(true)
-      const res = await api.put<{ conversation: unknown }>(
+      const res = await api.put<{ conversation: Record<string, unknown> }>(
         `/conversations/${id}`,
         {
           title: editTitle,
@@ -116,7 +116,28 @@ export const ConversationPage = () => {
           visibility: editVisibility,
         },
       )
-      setConversation(mapConversationDetail(res.conversation))
+      const updated = res.conversation
+      setConversation((prev) => {
+        if (!prev) return prev
+        const newTags = editTags
+          .split(',')
+          .map((t) => t.trim().toLowerCase())
+          .filter((t) => t.length > 0)
+          .map((name) => ({
+            id: name,
+            name,
+            color: null,
+          }))
+        return {
+          ...prev,
+          title: (updated.title as string) ?? prev.title,
+          description: (updated.description as string) ?? prev.description,
+          visibility:
+            (updated.visibility as 'public' | 'unlisted' | 'private') ??
+            prev.visibility,
+          tags: newTags,
+        }
+      })
       setIsEditing(false)
       showToast('Conversation updated successfully', 'success')
     } catch (err) {
