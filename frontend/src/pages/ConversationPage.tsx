@@ -101,16 +101,14 @@ export const ConversationPage = () => {
       const formData = new FormData()
       formData.append('file', file)
 
-      const res = await api.post<{
+      const res = await api.patch<{
         conversation: Record<string, unknown>
         sync: {
           existingEntries: number
           newEntries: number
           totalEntries: number
         }
-      }>(`/conversations/${id}/transcript`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      }>(`/conversations/${id}/transcript`, formData)
 
       const updated = res.conversation
       setConversation((prev) => {

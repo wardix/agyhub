@@ -122,4 +122,17 @@ export const api = {
     }),
   delete: <T = unknown>(endpoint: string, options?: RequestInit) =>
     apiFetch<T>(endpoint, { ...options, method: 'DELETE' }),
+  patch: <T = unknown>(
+    endpoint: string,
+    body?: unknown,
+    options?: RequestInit,
+  ) =>
+    apiFetch<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body:
+        body instanceof FormData
+          ? body
+          : JSON.stringify(transformKeysToSnake(body)),
+    }),
 }
