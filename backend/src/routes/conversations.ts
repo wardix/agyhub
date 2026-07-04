@@ -345,4 +345,101 @@ conversations.delete('/:id', authRequired, async (c) => {
   }
 })
 
+conversations.patch('/:id/transcript', authRequired, async (c) => {
+  try {
+    const id = c.req.param('id')
+    const userId = c.get('userId')
+    const body = await c.req.parseBody()
+    const file = body.file as File
+
+    if (!file) {
+      return c.json({ error: 'File is required', status: 400 }, 400)
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      return c.json({ error: 'File too large (max 10MB)', status: 400 }, 400)
+    }
+
+    const [conversation] =
+      await sql`SELECT user_id, transcript FROM conversations WHERE id = ${id}`
+
+    if (!conversation) {
+      return c.json({ error: 'Conversation not found', status: 404 }, 404)
+    }
+
+    if (conversation.user_id !== userId) {
+      return c.json({ error: 'Forbidden: not the author', status: 403 }, 403)
+    }
+
+    const content = await file.text()
+    if (!content.trim()) {
+      return c.json({ error: 'File is empty', status: 400 }, 400)
+    }
+
+    let newEntries: TranscriptEntry[]
+    try {
+      newEntries = parseJsonl(content)
+    } catch {
+      return c.json({ error: 'Invalid JSONL format', status: 400 }, 400)
+    }
+
+    if (newEntries.length === 0) {
+      return c.json({ error: 'File contains no entries', status: 400 }, 400)
+    }
+
+    const validation = validateTranscript(newEntries)
+    if (!validation.valid) {
+      return c.json({ error: validation.error, status: 400 }, 400)
+    }
+
+    const existingEntries: TranscriptEntry[] =
+      typeof conversation.transcript === 'string'
+        ? JSON.parse(conversation.transcript)
+        : conversation.transcript || []
+
+    const existingStepIndices = new Set(
+      existingEntries.map((e) => e.step_index),
+    )
+    const entriesToAppend = newEntries.filter(
+      (e) => !existingStepIndices.has(e.step_index),
+    )
+
+    if (entriesToAppend.length === 0) {
+      return c.json(
+        { error: 'No new entries found to append', status: 400 },
+        400,
+      )
+    }
+
+    const mergedEntries = [...existingEntries, ...entriesToAppend].sort(
+      (a, b) => (a.step_index ?? 0) - (b.step_index ?? 0),
+    )
+
+    const newMessageCount = countMessages(mergedEntries)
+
+    const [updatedConversation] = await sql`
+      UPDATE conversations
+      SET transcript = ${JSON.stringify(mergedEntries)},
+          message_count = ${newMessageCount}
+      WHERE id = ${id}
+      RETURNING id, user_id, title, description, message_count, like_count, comment_count, view_count, created_at, visibility
+    `
+
+    return c.json(
+      {
+        conversation: updatedConversation,
+        sync: {
+          existingEntries: existingEntries.length,
+          newEntries: entriesToAppend.length,
+          totalEntries: mergedEntries.length,
+        },
+      },
+      200,
+    )
+  } catch (err) {
+    console.error('Error in PATCH /api/conversations/:id/transcript:', err)
+    return c.json({ error: 'Internal server error', status: 500 }, 500)
+  }
+})
+
 export { conversations }
